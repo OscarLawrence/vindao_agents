@@ -1,0 +1,36 @@
+[project]
+name = "vindao_agents"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Vincent", email = "vindao@outlook.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "jinja2>=3.1.6",
+    "litellm>=1.78.7",
+    "prompt-toolkit>=3.0.52",
+    "pydantic>=2.12.3",
+    "python-frontmatter>=1.1.0",
+    "rich>=14.2.0",
+    "textual>=6.4.0",
+]
+
+[project.scripts]
+agent = "vindao_agents.main:main"
+
+[build-system]
+requires = ["uv_build>=0.9.4,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["src/vindao_agents", "tests"]
+python_files = ["*.py"]
+anyio_mode = "auto"
