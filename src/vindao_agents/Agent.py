@@ -18,6 +18,7 @@ from vindao_agents.ToolParsers import parsers, ToolParser, AtSyntaxParser
 from vindao_agents.executors import execute_tool_call
 from vindao_agents.InferenceAdapters import adapters, InferenceAdapter, LiteLLMInferenceAdapter
 from vindao_agents.AgentStores import stores, JsonAgentStore, AgentStore
+from vindao_agents.utils import resolve_path
 
 load_dotenv()
 
@@ -92,7 +93,7 @@ class Agent:
         if max_iterations is None:
             max_iterations = self.config.max_iterations
         accumulated_reasoning = ""
-        accumulated = ""
+        accumulated_content = ""
         tool_call_enabled = True
 
         if iteration == max_iterations - 1:
@@ -103,14 +104,14 @@ class Agent:
 
             if chunk_type == "reasoning":
                 accumulated_reasoning += chunk
-                
+
             elif chunk_type == "content":
-                accumulated += chunk
+                accumulated_content += chunk
             yield chunk, chunk_type
-            if accumulated.startswith('@DISABLE_TOOL_CALL@'):
+            if accumulated_content.startswith('@DISABLE_TOOL_CALL@'):
                 tool_call_enabled = False
             if tool_call_enabled:
-                call = self.parser.parse(accumulated, list(self.tools.keys()))
+                call = self.parser.parse(accumulated_content, list(self.tools.keys()))
                 if call:
                     tool_name, tool_call = call
                     result = str(execute_tool_call(tool_call, self.tools[tool_name]))
@@ -121,7 +122,7 @@ class Agent:
                     )
                     yield tool_call, 'tool'
                     self.state.add_message(AssistantMessage(
-                        content=accumulated,
+                        content=accumulated_content,
                         reasoning_content=accumulated_reasoning.strip(),
                         tool_call=tool_call
                     ))
@@ -132,9 +133,9 @@ class Agent:
                     ))
                     return (yield from self.invoke(iteration + 1, max_iterations=max_iterations))
 
-        if accumulated.startswith('@DISABLE_TOOL_CALL@'):
-            accumulated = accumulated.replace('@DISABLE_TOOL_CALL@', '', 1).lstrip()
-        self.state.add_message(AssistantMessage(content=accumulated, reasoning_content=accumulated_reasoning))
+        if accumulated_content.startswith('@DISABLE_TOOL_CALL@'):
+            accumulated_content = accumulated_content.replace('@DISABLE_TOOL_CALL@', '', 1).lstrip()
+        self.state.add_message(AssistantMessage(content=accumulated_content, reasoning_content=accumulated_reasoning))
         if self.config.auto_save:
             self.store.save(self)
         
@@ -206,10 +207,11 @@ class Agent:
     @classmethod
     def from_name(cls, name: str) -> "Agent":
         """Create an Agent instance from a predefined agent name."""
-        base_path = Path.cwd() / "agents"
-        agent_path = base_path / f"{name}.md"
-        if not agent_path.exists():
-            agent_path = Path(__file__).parent / "agents" / f"{name}.md"
+        search_dirs = [
+            Path.cwd() / "agents",
+            Path(__file__).parent / "agents"
+        ]
+        agent_path = resolve_path(f"{name}.md", search_dirs)
         return cls.from_markdown(agent_path)
 
     def __load_tools(self, tool_identifiers: list[str]) -> dict[str, Tool]:
