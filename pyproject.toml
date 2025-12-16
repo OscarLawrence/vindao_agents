@@ -1,12 +1,32 @@
 [project]
 name = "vindao_agents"
 version = "0.1.0"
-description = "Add your description here"
+description = "An extensible AI agent framework for building interactive, tool-enabled conversational agents with streaming support"
 readme = "README.md"
+license = { file = "LICENSE" }
 authors = [
     { name = "Vincent", email = "vindao@outlook.com" }
 ]
+maintainers = [
+    { name = "Vincent", email = "vindao@outlook.com" }
+]
 requires-python = ">=3.12"
+keywords = [
+    "ai", "agents", "llm", "chatbot", "automation",
+    "tool-calling", "conversational-ai", "ai-framework"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: Other/Proprietary License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Operating System :: OS Independent",
+    "Typing :: Typed",
+]
 dependencies = [
     "fastapi[standard]>=0.120.1",
     "jinja2>=3.1.6",
@@ -19,6 +39,12 @@ dependencies = [
     "textual>=6.4.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/vindao/vindao_agents"
+Repository = "https://github.com/vindao/vindao_agents"
+Issues = "https://github.com/vindao/vindao_agents/issues"
+Changelog = "https://github.com/vindao/vindao_agents/blob/main/CHANGELOG.md"
+
 [project.scripts]
 agent = "vindao_agents.main:main"
 
@@ -29,6 +55,14 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "pytest>=8.4.2",
+    "bump2version>=1.0.1",
+]
+
+[tool.uv_build]
+# Include agent templates and prompt files in the package
+include = [
+    "src/vindao_agents/agents/*.md",
+    "src/vindao_agents/prompts/**/*",
 ]
 
 [tool.pytest.ini_options]

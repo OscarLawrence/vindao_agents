@@ -1,0 +1,19 @@
+# Include important files
+include README.md
+include LICENSE
+include CHANGELOG.md
+include pyproject.toml
+include .bumpversion.cfg
+
+# Include agent templates
+recursive-include src/vindao_agents/agents *.md
+
+# Include prompt templates
+recursive-include src/vindao_agents/prompts *
+
+# Exclude development and test files
+exclude .gitignore
+exclude test_run.py
+recursive-exclude tests *
+recursive-exclude .github *
+recursive-exclude .vindao_agents *
