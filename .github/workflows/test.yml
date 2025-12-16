@@ -31,11 +31,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv pip install --system -e ".[dev]"
+          uv sync --all-groups
 
       - name: Run tests
         run: |
-          pytest -v
+          uv run pytest -v
 
       - name: Check package build
         run: |
@@ -59,8 +59,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv pip install --system -e ".[dev]"
+          uv sync
 
       - name: Check imports
         run: |
-          python -c "from vindao_agents import Agent; print(f'Import successful. Version: {Agent.__module__}')"
+          uv run python -c "from vindao_agents import Agent; print(f'Import successful. Version: {Agent.__module__}')"
