@@ -10,6 +10,7 @@ import litellm
 from vindao_agents.InferenceAdapters.InferenceAdapter import InferenceAdapter
 from vindao_agents.models.messages import MessageType
 from vindao_agents.formatters import format_exception
+from vindao_agents.utils import get_default_logger
 
 class LiteLLMInferenceAdapter(InferenceAdapter):
 
@@ -17,6 +18,7 @@ class LiteLLMInferenceAdapter(InferenceAdapter):
     def __init__(self, provider: str, model: str):
         """Initialize adapter with provider and model configuration."""
         self.model_str = f"{provider}/{model}"
+        self.logger = get_default_logger()
 
     def complete_chat(self, messages: list[MessageType], max_retries: int = 5, retry: int = 0):
         formatted_messages = self._formatMessages(messages)
@@ -37,7 +39,7 @@ class LiteLLMInferenceAdapter(InferenceAdapter):
                     yield delta_content, "content"
         except Exception as e:
             if retry < max_retries:
-                print(f"{format_exception(e)}. Retrying {retry + 1}/{max_retries}...")
+                self.logger.warning(f"{format_exception(e)}. Retrying {retry + 1}/{max_retries}...")
                 sleep(2 ** retry)  # Exponential backoff
                 yield from self.complete_chat(messages, max_retries, retry + 1)
             else:

@@ -1,7 +1,7 @@
 # vindao_agents Framework - Refactoring Plan
 
 **Date:** 2025-12-16
-**Status:** Phase 1 - Foundation Work
+**Status:** Phase 2 - Core Refactoring
 
 ---
 
@@ -15,6 +15,11 @@
 
 ### Phase 1: Foundation Work
 - [x] **Phase 1.1: Centralize Path Resolution** - Created `utils/path_resolution.py` with `resolve_path()` and `resolve_path_with_fallbacks()`, updated `Agent.from_name()` and `load_system_message_template.py`, added 15 comprehensive tests (2025-12-16)
+- [x] **Phase 1.2: Add Logging Framework** - Created `utils/logger.py` with `AgentLogger` Protocol and `get_default_logger()`, updated `Agent.__init__()` to accept optional logger, improved `Agent.instruct()` to only yield events (cleaner separation), updated `Agent.chat()` to handle display, replaced print statements throughout framework, created 16 comprehensive logger tests (2025-12-16)
+
+### Phase 2: Core Refactoring
+- [x] **Phase 2.1: Extract I/O from Agent** - Created `formatters/console_formatter.py` with `ConsoleFormatter` class, updated `Agent.chat()` to use formatter instead of direct sys.stdout calls, Agent is now fully I/O agnostic, created 13 comprehensive tests (2025-12-16)
+- [x] **Phase 2.2: Extract MessageBuilder** - Created `builders/message_builder.py` with `MessageBuilder` class, removed `Agent.__build_system_message()` method, system message construction now isolated and testable, created 13 comprehensive tests (2025-12-16)
 
 ### Design Decisions (Not Issues)
 - **Message role mutation (prev #4)** - Intentional for model-agnostic tool calling ✓
@@ -74,7 +79,7 @@ def resolve_path_with_fallbacks(
 
 ---
 
-#### 1.2 Add Logging Framework
+#### 1.2 Add Logging Framework ✅ COMPLETED
 **Issue #6d** | `Agent.py`, framework-wide
 
 **Problem:**
@@ -83,19 +88,18 @@ def resolve_path_with_fallbacks(
 - Cannot disable or redirect output
 - Makes Agent unusable in non-console environments (APIs, tests)
 
-**Fix:**
+**Implementation:**
 ```python
-# Create: src/vindao_agents/utils/logger.py
+# Created: src/vindao_agents/utils/logger.py
 import logging
 from typing import Protocol
 
 class AgentLogger(Protocol):
-    def debug(self, msg: str) -> None: ...
-    def info(self, msg: str) -> None: ...
-    def warning(self, msg: str) -> None: ...
-    def error(self, msg: str) -> None: ...
+    def debug(self, msg: str, *args, **kwargs) -> None: ...
+    def info(self, msg: str, *args, **kwargs) -> None: ...
+    def warning(self, msg: str, *args, **kwargs) -> None: ...
+    def error(self, msg: str, *args, **kwargs) -> None: ...
 
-# Provide default logger but allow injection
 def get_default_logger(name: str = "vindao_agents") -> logging.Logger:
     logger = logging.getLogger(name)
     if not logger.handlers:
@@ -106,15 +110,25 @@ def get_default_logger(name: str = "vindao_agents") -> logging.Logger:
     return logger
 ```
 
-**Impact:**
-- Enables proper logging infrastructure
-- **Required before Phase 2** (Agent refactoring)
-- Allows users to control output
+**Results:**
+- ✅ Created `src/vindao_agents/utils/logger.py` with AgentLogger Protocol and get_default_logger()
+- ✅ Updated `src/vindao_agents/utils/__init__.py` to export logger utilities
+- ✅ Updated `Agent.__init__()` to accept optional logger parameter
+- ✅ Replaced print statements in `Agent.py` with logger for non-streaming messages
+- ✅ Improved `Agent.instruct()` - now only yields chunks, no display logic (cleaner separation)
+- ✅ Updated `Agent.chat()` - handles display using sys.stdout for streaming, logger for messages
+- ✅ Replaced print statement in `LiteLLMInferenceAdapter.py` (retry error message now uses logger.warning())
+- ✅ Updated test suite: fixed `test_chat_exit_command` and `test_chat_keyboard_interrupt` to check logger calls
+- ✅ Created comprehensive test suite for logger utility with 16 tests
+- ✅ All 95 tests passing (79 original + 16 new logger tests)
+- ✅ No print statements remaining in framework code
 
-**Files to update:**
-- Create `src/vindao_agents/utils/logger.py`
-- Update `Agent.__init__()` to accept optional logger
-- Replace print statements with logging calls throughout codebase
+**Impact:**
+- Proper logging infrastructure now in place
+- Users can inject custom loggers or configure default logger
+- Agent can be used in non-console environments (APIs, tests, background jobs)
+- Cleaner separation: `instruct()` yields events, `chat()` handles display
+- Foundation ready for Phase 2 refactoring
 
 ---
 
@@ -122,7 +136,7 @@ def get_default_logger(name: str = "vindao_agents") -> logging.Logger:
 
 These changes address architectural issues and improve maintainability:
 
-#### 2.1 Refactor Agent Class - Extract I/O
+#### 2.1 Refactor Agent Class - Extract I/O ✅ COMPLETED
 **Issue #3** | `Agent.py:141-148`
 
 **Problem:**
@@ -172,22 +186,24 @@ for chunk, chunk_type in agent.instruct("Do something"):
     formatter.display_event(chunk, chunk_type)
 ```
 
+**Results:**
+- ✅ Created `src/vindao_agents/formatters/console_formatter.py` with ConsoleFormatter class
+- ✅ Updated `src/vindao_agents/formatters/__init__.py` to export ConsoleFormatter
+- ✅ Updated `Agent.chat()` to use ConsoleFormatter instead of direct sys.stdout calls
+- ✅ Agent.instruct() remains clean (yield-only, no display logic)
+- ✅ Created comprehensive test suite with 13 tests
+- ✅ All 108 tests passing (95 original + 13 new ConsoleFormatter tests)
+- ✅ Agent is now fully I/O agnostic
+
 **Impact:**
-- Agent becomes usable in any context
-- Users can implement custom formatters
-- Easier to test
-
-**Dependencies:** Requires Phase 1.2 (Logging Framework)
-
-**Files to update:**
-- `Agent.instruct()` - remove print statements
-- `Agent.chat()` - update to use formatter
-- Create `src/vindao_agents/formatters/console_formatter.py`
-- Update examples to show proper usage
+- Agent becomes usable in any context (APIs, background jobs, tests)
+- Users can implement custom formatters (JSON, GUI, etc.)
+- Clean separation of concerns: Agent orchestrates, ConsoleFormatter displays
+- Easier to test and maintain
 
 ---
 
-#### 2.2 Extract MessageBuilder
+#### 2.2 Extract MessageBuilder ✅ COMPLETED
 **Issue #6c** | `Agent.py:224-231`
 
 **Problem:**
@@ -241,16 +257,21 @@ class MessageBuilder:
         ).strip()
 ```
 
+**Results:**
+- ✅ Created `src/vindao_agents/builders/message_builder.py` with MessageBuilder class
+- ✅ Created `src/vindao_agents/builders/__init__.py`
+- ✅ Updated `Agent.__init__()` to use MessageBuilder for system message construction
+- ✅ Removed `Agent.__build_system_message()` method (9 lines eliminated)
+- ✅ Removed unused imports (load_system_message_template, format_prompt)
+- ✅ Created comprehensive test suite with 13 tests
+- ✅ All 121 tests passing (108 original + 13 new MessageBuilder tests)
+- ✅ Agent class reduced from 244 to 236 lines (-3.3%)
+
 **Impact:**
 - Single responsibility: Agent orchestrates, MessageBuilder builds messages
-- Easier to test message construction
+- System message construction now isolated and testable
 - More flexible for custom message formats
-
-**Files to update:**
-- Create `src/vindao_agents/builders/message_builder.py`
-- Create `src/vindao_agents/builders/__init__.py`
-- Update `Agent.__init__()` to use MessageBuilder
-- Remove `Agent.__build_system_message()`
+- Easier to modify message construction without touching Agent
 
 ---
 
@@ -635,9 +656,10 @@ The following are explicitly not being addressed:
 
 ## 📊 CURRENT STATE
 
-**Test Suite:** 79 tests passing, 0 failing (64 original + 15 new path resolution tests)
-**Code Quality:** Priority 1 issues resolved, Phase 1.1 completed
-**Next Step:** Begin Phase 1.2 (Logging Framework)
+**Test Suite:** 121 tests passing, 0 failing (64 original + 15 path resolution + 16 logger + 13 console formatter + 13 message builder tests)
+**Code Quality:** Phase 1 (Foundation Work) and Phase 2.1-2.2 (Core Refactoring) completed
+**Agent.py Size:** 236 lines (down from 244, -3.3%)
+**Next Step:** Begin Phase 2.3 (Tool Loading Consistency) or Phase 2.4 (Parser Initialization Order)
 
 ---
 

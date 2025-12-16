@@ -6,19 +6,21 @@ from pathlib import Path
 from os import getenv
 from dotenv import load_dotenv
 import json
+import sys
 
 # local
 from vindao_agents.models.messages import MessageType, SystemMessage, UserMessage, AssistantMessage, ToolMessage
 from vindao_agents.models.tool import ToolCall
 from .models.agent import AgentConfig, AgentState
 from vindao_agents.Tool import Tool
-from vindao_agents.loaders import load_public_functions_from_identifier, load_system_message_template, load_messages_from_dicts, load_agent_from_markdown
-from vindao_agents.formatters import format_prompt
+from vindao_agents.loaders import load_public_functions_from_identifier, load_messages_from_dicts, load_agent_from_markdown
+from vindao_agents.formatters import ConsoleFormatter
 from vindao_agents.ToolParsers import parsers, ToolParser, AtSyntaxParser
 from vindao_agents.executors import execute_tool_call
 from vindao_agents.InferenceAdapters import adapters, InferenceAdapter, LiteLLMInferenceAdapter
 from vindao_agents.AgentStores import stores, JsonAgentStore, AgentStore
-from vindao_agents.utils import resolve_path
+from vindao_agents.utils import resolve_path, AgentLogger, get_default_logger
+from vindao_agents.builders import MessageBuilder
 
 load_dotenv()
 
@@ -30,6 +32,7 @@ class Agent:
     inference_adapter: InferenceAdapter
     store: AgentStore
     parser: ToolParser
+    logger: AgentLogger
 
     def __init__(
             self,
@@ -50,6 +53,7 @@ class Agent:
             inference_adapter: InferenceAdapter | str = LiteLLMInferenceAdapter,
             store: AgentStore | str = JsonAgentStore,
             parser: ToolParser | str = AtSyntaxParser,
+            logger: AgentLogger | None = None,
     ):
         self.config = AgentConfig(
             name=name,
@@ -66,6 +70,9 @@ class Agent:
             parser=parser if isinstance(parser, str) else "at_syntax",
         )
 
+        # Initialize logger
+        self.logger = logger if logger is not None else get_default_logger()
+
         # Initialize parser early since it's needed for building the system message
         if isinstance(parser, str):
             parser = parsers.get(parser, AtSyntaxParser)
@@ -73,7 +80,14 @@ class Agent:
 
         self.tools = self.__load_tools(tools)
         if not messages:
-            messages = [self.__build_system_message()]
+            message_builder = MessageBuilder()
+            system_message = message_builder.build_system_message(
+                model=self.config.model,
+                tools=self.tools,
+                parser=self.parser,
+                config=self.config
+            )
+            messages = [system_message]
         self.state = AgentState(
             session_id=session_id,
             created_at=created_at,
@@ -142,27 +156,24 @@ class Agent:
     def instruct(self, instruction: str):
         self.state.add_message(UserMessage(content=instruction))
         for chunk, chunk_type in self.invoke():
-            if chunk_type in ["content", "reasoning"]:
-                print(chunk, end='', flush=True)
-            elif chunk_type == "tool":
-                print(f" =>\n{chunk.result}\n")
             yield chunk, chunk_type
 
     def chat(self):
         """Start an interactive chat session with the agent."""
-        print("Starting chat session with the agent. Type 'exit' to quit.")
-        print("Session ID:", self.state.session_id)
+        formatter = ConsoleFormatter(self.logger)
+        formatter.display_message("Starting chat session with the agent. Type 'exit' to quit.")
+        formatter.display_message(f"Session ID: {self.state.session_id}")
         try:
             while True:
-                user_input = input("You: ")
+                user_input = input("\n\nYou: ")
                 if user_input.lower() in ['exit', 'quit']:
-                    print(f"Exiting chat session.\nSession ID: {self.state.session_id}")
+                    formatter.display_message(f"Exiting chat session.\nSession ID: {self.state.session_id}")
                     break
-                for _ in self.instruct(user_input):
-                    pass
-                print("\n")  # Newline after agent response
+                for chunk, chunk_type in self.instruct(user_input):
+                    formatter.display_event(chunk, chunk_type)
+                formatter.display_newline()
         except KeyboardInterrupt:
-            print(f"Exiting chat session.\nSession ID: {self.state.session_id}")
+            formatter.display_message(f"Exiting chat session.\nSession ID: {self.state.session_id}")
 
 
     @classmethod
@@ -222,14 +233,4 @@ class Agent:
                 loaded_tools[name] = Tool(f)
             
         return loaded_tools
-    
-    def __build_system_message(self) -> SystemMessage:
-        template = load_system_message_template(self.config.model, self.config.user_data_dir)
-        tool_str = ""
-        for tool in self.tools.values():
-            tool_str += tool.to_instruction(include_source=self.config.tools_with_source)
-        parser_instructions = self.parser.get_instructions()
-        content = format_prompt(template, {**self.config.system_prompt_data, "model": self.config.model, "behavior": self.config.behavior, "name": self.config.name, "tools": tool_str.strip(), "parser_instructions": parser_instructions})
-        return SystemMessage(content=content)
 
-    

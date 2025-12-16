@@ -153,9 +153,8 @@ class TestAgentChat:
     """Tests for Agent chat method."""
 
     @patch("builtins.input")
-    @patch("builtins.print")
     @patch("vindao_agents.Agent.adapters")
-    def test_chat_exit_command(self, mock_adapters, mock_print, mock_input, tmp_path):
+    def test_chat_exit_command(self, mock_adapters, mock_input, tmp_path):
         """Test that chat exits on 'exit' command."""
         mock_adapter = MockInferenceAdapter(
             "ollama", "qwen2.5:0.5b", responses=[("response", "content")]
@@ -165,17 +164,21 @@ class TestAgentChat:
         mock_input.return_value = "exit"
 
         agent = Agent(user_data_dir=tmp_path, auto_save=False)
+
+        # Mock the logger to capture calls
+        mock_logger = MagicMock()
+        agent.logger = mock_logger
+
         agent.chat()
 
-        # Verify that exit message was printed
-        print_calls = [str(call) for call in mock_print.call_args_list]
-        assert any("Exiting" in str(call) for call in print_calls)
+        # Verify that exit message was logged
+        logger_calls = [str(call) for call in mock_logger.info.call_args_list]
+        assert any("Exiting" in str(call) for call in logger_calls)
 
     @patch("builtins.input")
-    @patch("builtins.print")
     @patch("vindao_agents.Agent.adapters")
     def test_chat_keyboard_interrupt(
-        self, mock_adapters, mock_print, mock_input, tmp_path
+        self, mock_adapters, mock_input, tmp_path
     ):
         """Test that chat handles keyboard interrupt gracefully."""
         mock_adapter = MockInferenceAdapter(
@@ -186,11 +189,16 @@ class TestAgentChat:
         mock_input.side_effect = KeyboardInterrupt()
 
         agent = Agent(user_data_dir=tmp_path, auto_save=False)
+
+        # Mock the logger to capture calls
+        mock_logger = MagicMock()
+        agent.logger = mock_logger
+
         agent.chat()
 
-        # Verify that interrupted message was printed with session ID
-        print_calls = [str(call) for call in mock_print.call_args_list]
-        assert any(agent.state.session_id in str(call).lower() for call in print_calls)
+        # Verify that interrupted message was logged with session ID
+        logger_calls = [str(call) for call in mock_logger.info.call_args_list]
+        assert any(agent.state.session_id in str(call).lower() for call in logger_calls)
 
 
 class TestAgentSave:
