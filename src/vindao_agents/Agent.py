@@ -73,12 +73,10 @@ class Agent:
         # Initialize logger
         self.logger = logger if logger is not None else get_default_logger()
 
-        # Initialize parser early since it's needed for building the system message
+        self.tools = self.__load_tools(tools)
         if isinstance(parser, str):
             parser = parsers.get(parser, AtSyntaxParser)
         self.parser = parser()
-
-        self.tools = self.__load_tools(tools)
         if not messages:
             message_builder = MessageBuilder()
             system_message = message_builder.build_system_message(

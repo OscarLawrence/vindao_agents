@@ -20,6 +20,8 @@
 ### Phase 2: Core Refactoring
 - [x] **Phase 2.1: Extract I/O from Agent** - Created `formatters/console_formatter.py` with `ConsoleFormatter` class, updated `Agent.chat()` to use formatter instead of direct sys.stdout calls, Agent is now fully I/O agnostic, created 13 comprehensive tests (2025-12-16)
 - [x] **Phase 2.2: Extract MessageBuilder** - Created `builders/message_builder.py` with `MessageBuilder` class, removed `Agent.__build_system_message()` method, system message construction now isolated and testable, created 13 comprehensive tests (2025-12-16)
+- [x] **Phase 2.3: Tool Loading Consistency** - Skipped due to serialization concerns. Current design (tools as strings only) is internally consistent and works well for the serialization flow. Adding Tool instance support would create architectural tension without clear benefit. (2025-12-16)
+- [x] **Phase 2.4: Parser Initialization Order** - Removed misleading comment and reordered initialization in `Agent.__init__()`. Parser no longer initialized "early" - both tools and parser are simply initialized before system message building. Cleaner code with no unnecessary coupling. (2025-12-16)
 
 ### Design Decisions (Not Issues)
 - **Message role mutation (prev #4)** - Intentional for model-agnostic tool calling ✓
@@ -657,9 +659,9 @@ The following are explicitly not being addressed:
 ## 📊 CURRENT STATE
 
 **Test Suite:** 121 tests passing, 0 failing (64 original + 15 path resolution + 16 logger + 13 console formatter + 13 message builder tests)
-**Code Quality:** Phase 1 (Foundation Work) and Phase 2.1-2.2 (Core Refactoring) completed
-**Agent.py Size:** 236 lines (down from 244, -3.3%)
-**Next Step:** Begin Phase 2.3 (Tool Loading Consistency) or Phase 2.4 (Parser Initialization Order)
+**Code Quality:** Phase 1 (Foundation Work) and Phase 2 (Core Refactoring) completed
+**Agent.py Size:** 234 lines (down from 244, -4.1%)
+**Next Step:** Phase 2 complete. Optional Phase 3 enhancements available if needed.
 
 ---
 
