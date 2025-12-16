@@ -1,8 +1,8 @@
 """Shared fixtures and configuration for pytest."""
 
 # stdlib
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator
 
 # third party
 import pytest

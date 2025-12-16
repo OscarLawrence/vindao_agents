@@ -4,8 +4,6 @@
 from pathlib import Path
 
 # third party
-import pytest
-
 # local
 from vindao_agents.parsers.parse_docstring_from_file import parse_docstring_from_file
 

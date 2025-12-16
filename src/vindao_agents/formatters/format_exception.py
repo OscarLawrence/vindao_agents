@@ -1,8 +1,8 @@
 """Formatter for exceptions into readable strings."""
 
 # stdlib
-from typing import Callable
 import traceback
+from collections.abc import Callable
 
 
 def format_exception(exc: Exception, function: Callable | None = None) -> str:

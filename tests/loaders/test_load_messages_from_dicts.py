@@ -1,16 +1,14 @@
 """Tests for load_messages_from_dicts."""
 
 # third party
-import pytest
 
 # local
 from vindao_agents.loaders.load_messages_from_dicts import load_messages_from_dicts
-from vindao_agents.models.messages import SystemMessage, UserMessage, AssistantMessage, ToolMessage
+from vindao_agents.models.messages import AssistantMessage, SystemMessage, ToolMessage, UserMessage
 
 
 class TestLoadMessagesFromDicts:
     def test_load_messages_from_dicts(self):
-        from vindao_agents.models.tool import ToolCall
 
         tool_call_dict = {"name": "test_tool", "call": "test_call", "result": "test_result"}
         dicts = [

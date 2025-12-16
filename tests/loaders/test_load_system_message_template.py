@@ -4,8 +4,6 @@
 from pathlib import Path
 
 # third party
-import pytest
-
 # local
 from vindao_agents.loaders.load_system_message_template import load_system_message_template
 

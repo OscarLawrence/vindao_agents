@@ -6,11 +6,13 @@ from time import sleep
 # third party
 import litellm
 
+from vindao_agents.formatters import format_exception
+
 # local
 from vindao_agents.InferenceAdapters.InferenceAdapter import InferenceAdapter
 from vindao_agents.models.messages import MessageType
-from vindao_agents.formatters import format_exception
 from vindao_agents.utils import get_default_logger
+
 
 class LiteLLMInferenceAdapter(InferenceAdapter):
 

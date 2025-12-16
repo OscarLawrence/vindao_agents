@@ -1,11 +1,10 @@
 """Tests for executor functions."""
 
 # third party
-import pytest
 
 # local
-from vindao_agents.Tool import Tool
 from vindao_agents.executors.execute_tool_call import execute_tool_call
+from vindao_agents.Tool import Tool
 
 
 class TestExecuteToolCall:

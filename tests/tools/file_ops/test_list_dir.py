@@ -4,8 +4,6 @@
 from pathlib import Path
 
 # third party
-import pytest
-
 # local
 from vindao_agents.tools.file_ops.list_dir import list_dir
 

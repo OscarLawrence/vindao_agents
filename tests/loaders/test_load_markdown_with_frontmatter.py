@@ -4,8 +4,6 @@
 from pathlib import Path
 
 # third party
-import pytest
-
 # local
 from vindao_agents.loaders.load_markdown_with_frontmatter import load_markdown_with_frontmatter
 

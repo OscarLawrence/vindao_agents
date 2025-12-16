@@ -5,8 +5,8 @@ import sys
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from vindao_agents.utils import AgentLogger
     from vindao_agents.models.tool import ToolCall
+    from vindao_agents.utils import AgentLogger
 
 
 class ConsoleFormatter:
@@ -21,7 +21,7 @@ class ConsoleFormatter:
     the Agent class to remain I/O agnostic.
     """
 
-    def __init__(self, logger: "AgentLogger"):
+    def __init__(self, logger: AgentLogger):
         """Initialize the console formatter.
 
         Args:
@@ -29,7 +29,7 @@ class ConsoleFormatter:
         """
         self.logger = logger
 
-    def display_event(self, chunk: str | "ToolCall", chunk_type: str) -> None:
+    def display_event(self, chunk: str | ToolCall, chunk_type: str) -> None:
         """Display an agent event to the console.
 
         Args:

@@ -1,14 +1,12 @@
 
 # stdlib
 import json
-from pathlib import Path
 from os import getenv
+from pathlib import Path
 
 # third-party
 from fastapi import FastAPI, WebSocket
-from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
-
 
 # local
 from vindao_agents import Agent
@@ -35,16 +33,16 @@ async def get_all_sessions():
     for file in sessions_path.iterdir():
         print(file.suffix)
         if file.suffix == '.json':
-            with open(file, 'r') as f:
+            with open(file) as f:
                 sessions[file.stem] = json.load(f)
     return sessions
-    
+
 @app.get("/session/{session_id}")
 async def get_session(session_id: str):
     session_path = Path(USER_DATA_DIR) / 'sessions' / f"{session_id}.json"
     if not session_path.exists():
         return {"error": "Session not found"}
-    with open(session_path, "r") as f:
+    with open(session_path) as f:
         session_data = json.load(f)
     return session_data
 
@@ -68,4 +66,4 @@ async def websocket_endpoint(websocket: WebSocket):
                 await websocket.send_json({"type": "content", "data": chunk})
             elif chunk_type == "tool":
                 await websocket.send_json({"type": "tool", "data": chunk.result})
-        
+

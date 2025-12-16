@@ -1,6 +1,6 @@
 """Multi-file reader tool."""
-from .read_file import read_file
 from ...formatters.format_exception import format_exception
+from .read_file import read_file
 
 
 def read_files(*paths: str) -> str:

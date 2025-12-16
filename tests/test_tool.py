@@ -4,8 +4,6 @@
 import inspect
 
 # third party
-import pytest
-
 # local
 from vindao_agents.Tool import Tool
 

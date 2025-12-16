@@ -1,7 +1,6 @@
 """Tests for format_exception."""
 
 # third party
-import pytest
 
 # local
 from vindao_agents.formatters.format_exception import format_exception

@@ -1,7 +1,7 @@
 """Inference adapters for different LLM providers."""
 
-from .LiteLLMInferenceAdapter import LiteLLMInferenceAdapter
 from .InferenceAdapter import InferenceAdapter
+from .LiteLLMInferenceAdapter import LiteLLMInferenceAdapter
 
 adapters = {
     "litellm": LiteLLMInferenceAdapter,

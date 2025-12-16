@@ -5,6 +5,7 @@ from pathlib import Path
 # local
 from vindao_agents.loaders import load_markdown_with_frontmatter
 
+
 def load_agent_from_markdown(path: Path | str) -> dict:
     """Load an Agent instance from a markdown file with frontmatter."""
     path = Path(path)

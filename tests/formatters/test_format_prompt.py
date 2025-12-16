@@ -1,7 +1,6 @@
 """Tests for format_prompt."""
 
 # third party
-import pytest
 
 # local
 from vindao_agents.formatters.format_prompt import format_prompt

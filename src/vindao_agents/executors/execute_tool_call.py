@@ -1,8 +1,9 @@
 """Execute a tool call string using the provided tool."""
 
 # local
-from vindao_agents.Tool import Tool
 from vindao_agents.formatters import format_exception
+from vindao_agents.Tool import Tool
+
 
 def execute_tool_call(tool_call: str, tool: Tool) -> str:
     try:

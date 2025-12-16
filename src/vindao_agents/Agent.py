@@ -1,26 +1,32 @@
 """Agent orchestrator for managing AI agent interactions and tool execution."""
 # stdlib
-from uuid import uuid4 as uuid
-from datetime import datetime, timezone
-from pathlib import Path
-from os import getenv
-from dotenv import load_dotenv
 import json
-import sys
+from datetime import UTC, datetime
+from os import getenv
+from pathlib import Path
+from uuid import uuid4 as uuid
+
+from dotenv import load_dotenv
+
+from vindao_agents.AgentStores import AgentStore, JsonAgentStore, stores
+from vindao_agents.builders import MessageBuilder
+from vindao_agents.executors import execute_tool_call
+from vindao_agents.formatters import ConsoleFormatter
+from vindao_agents.InferenceAdapters import InferenceAdapter, LiteLLMInferenceAdapter, adapters
+from vindao_agents.loaders import (
+    load_agent_from_markdown,
+    load_messages_from_dicts,
+    load_public_functions_from_identifier,
+)
 
 # local
-from vindao_agents.models.messages import MessageType, SystemMessage, UserMessage, AssistantMessage, ToolMessage
+from vindao_agents.models.messages import AssistantMessage, MessageType, ToolMessage, UserMessage
 from vindao_agents.models.tool import ToolCall
-from .models.agent import AgentConfig, AgentState
 from vindao_agents.Tool import Tool
-from vindao_agents.loaders import load_public_functions_from_identifier, load_messages_from_dicts, load_agent_from_markdown
-from vindao_agents.formatters import ConsoleFormatter
-from vindao_agents.ToolParsers import parsers, ToolParser, AtSyntaxParser
-from vindao_agents.executors import execute_tool_call
-from vindao_agents.InferenceAdapters import adapters, InferenceAdapter, LiteLLMInferenceAdapter
-from vindao_agents.AgentStores import stores, JsonAgentStore, AgentStore
-from vindao_agents.utils import resolve_path, AgentLogger, get_default_logger
-from vindao_agents.builders import MessageBuilder
+from vindao_agents.ToolParsers import AtSyntaxParser, ToolParser, parsers
+from vindao_agents.utils import AgentLogger, get_default_logger, resolve_path
+
+from .models.agent import AgentConfig, AgentState
 
 load_dotenv()
 
@@ -47,8 +53,8 @@ class Agent:
             system_prompt_data: dict | None = None,
             tools_with_source: bool = True,
             session_id: str = uuid().hex,
-            created_at: float = datetime.now(timezone.utc).timestamp(),
-            updated_at: float = datetime.now(timezone.utc).timestamp(),
+            created_at: float = datetime.now(UTC).timestamp(),
+            updated_at: float = datetime.now(UTC).timestamp(),
             messages: list[MessageType] | None = None,
             inference_adapter: InferenceAdapter | str = LiteLLMInferenceAdapter,
             store: AgentStore | str = JsonAgentStore,
@@ -150,7 +156,7 @@ class Agent:
         self.state.add_message(AssistantMessage(content=accumulated_content, reasoning_content=accumulated_reasoning))
         if self.config.auto_save:
             self.store.save(self)
-        
+
     def instruct(self, instruction: str):
         self.state.add_message(UserMessage(content=instruction))
         for chunk, chunk_type in self.invoke():
@@ -194,7 +200,7 @@ class Agent:
             "messages": messages
         }
         return cls.from_dict(data)
-    
+
     @classmethod
     def from_json_file(cls, path: str | Path) -> "Agent":
         """Create an Agent instance from a JSON file."""
@@ -212,7 +218,7 @@ class Agent:
     def from_markdown(cls, path: str | Path) -> "Agent":
         """Create an Agent instance from a markdown file with frontmatter."""
         return cls(**load_agent_from_markdown(path))
-    
+
     @classmethod
     def from_name(cls, name: str) -> "Agent":
         """Create an Agent instance from a predefined agent name."""
@@ -229,6 +235,6 @@ class Agent:
             loaded_functions = load_public_functions_from_identifier(tool)
             for name, f in loaded_functions:
                 loaded_tools[name] = Tool(f)
-            
+
         return loaded_tools
 

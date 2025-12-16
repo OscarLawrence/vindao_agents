@@ -2,24 +2,19 @@
 
 # stdlib
 import json
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, timezone
-from unittest.mock import Mock, patch, MagicMock, call
+from unittest.mock import MagicMock, patch
 from uuid import uuid4
 
 # third party
-import pytest
-
 # local
 from vindao_agents.Agent import Agent
-from vindao_agents.models.agent import AgentConfig, AgentState
 from vindao_agents.models.messages import (
+    AssistantMessage,
     SystemMessage,
     UserMessage,
-    AssistantMessage,
-    ToolMessage,
 )
-from vindao_agents.models.tool import ToolCall
 from vindao_agents.Tool import Tool
 
 
@@ -85,7 +80,7 @@ class TestAgentInitialization:
     def test_initialization_with_session_data(self, tmp_path):
         """Test agent initialization with existing session data."""
         session_id = uuid4().hex
-        created_at = datetime.now(timezone.utc).timestamp()
+        created_at = datetime.now(UTC).timestamp()
         messages = [
             SystemMessage(content="System message"),
             UserMessage(content="User message"),
@@ -253,8 +248,8 @@ class TestAgentFromJson:
             },
             "state": {
                 "session_id": "test-session-id",
-                "created_at": datetime.now(timezone.utc).timestamp(),
-                "updated_at": datetime.now(timezone.utc).timestamp(),
+                "created_at": datetime.now(UTC).timestamp(),
+                "updated_at": datetime.now(UTC).timestamp(),
                 "messages": [
                     {"role": "system", "content": "System message"},
                     {"role": "user", "content": "User message"},
@@ -299,8 +294,8 @@ class TestAgentFromSessionId:
             },
             "state": {
                 "session_id": session_id,
-                "created_at": datetime.now(timezone.utc).timestamp(),
-                "updated_at": datetime.now(timezone.utc).timestamp(),
+                "created_at": datetime.now(UTC).timestamp(),
+                "updated_at": datetime.now(UTC).timestamp(),
                 "messages": [{"role": "system", "content": "System"}],
             },
         }

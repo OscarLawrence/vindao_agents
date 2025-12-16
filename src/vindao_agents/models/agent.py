@@ -1,9 +1,7 @@
 """Models for agent configuration and state management."""
 
 # stdlib
-from typing import Callable
-from datetime import datetime, timezone
-from pathlib import Path
+from datetime import UTC, datetime
 
 # third party
 from pydantic import BaseModel, Field
@@ -32,10 +30,10 @@ class AgentState(BaseModel):
     session_id: str = Field(..., description="Unique session identifier for the agent")
     created_at: float = Field(..., description="Timestamp when the agent state was created")
     updated_at: float = Field(..., description="Timestamp when the agent state was last updated")
-    
+
     messages: list[MessageType] = Field(default=[], description="List of messages exchanged by the agent")
 
     def add_message(self, message: MessageType) -> None:
         """Add a new message to the agent's message history and update the timestamp."""
         self.messages.append(message)
-        self.updated_at = datetime.now(timezone.utc).timestamp()
+        self.updated_at = datetime.now(UTC).timestamp()

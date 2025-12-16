@@ -278,10 +278,93 @@ You are a data analysis assistant.
 
 ## Development
 
+### Development Setup
+
+```bash
+git clone https://github.com/vindao/vindao_agents.git
+cd vindao_agents
+uv sync --all-groups
+```
+
+### Install Pre-commit Hooks
+
+```bash
+uv run pre-commit install
+```
+
+This will automatically run linting checks before each commit.
+
 ### Running Tests
 
 ```bash
-pytest
+# Run tests with coverage
+uv run pytest
+
+# Run tests in verbose mode
+uv run pytest -v
+
+# Run specific test file
+uv run pytest tests/test_agent.py
+```
+
+### Code Quality
+
+This project uses comprehensive code quality tools:
+
+#### Linting & Formatting
+
+```bash
+# Run Ruff linter
+uv run ruff check src tests
+
+# Auto-fix linting issues
+uv run ruff check --fix src tests
+
+# Format code
+uv run ruff format src tests
+
+# Check formatting without changes
+uv run ruff format --check src tests
+```
+
+#### Type Checking
+
+```bash
+# Run MyPy type checker
+uv run mypy src
+```
+
+#### Security Scanning
+
+```bash
+# Run Bandit security scanner
+uv run bandit -c pyproject.toml -r src
+```
+
+#### Run All Checks
+
+```bash
+# Run everything that CI runs
+uv run ruff check src tests
+uv run ruff format --check src tests
+uv run mypy src
+uv run bandit -c pyproject.toml -r src
+uv run pytest
+```
+
+### Pre-commit
+
+Pre-commit hooks run automatically before each commit:
+- Trailing whitespace removal
+- End-of-file fixing
+- YAML/JSON/TOML validation
+- Ruff linting and formatting
+- MyPy type checking
+- Bandit security scanning
+
+To run manually:
+```bash
+uv run pre-commit run --all-files
 ```
 
 ### Project Structure
@@ -289,6 +372,8 @@ pytest
 - `src/vindao_agents/` - Main package
 - `tests/` - Test suite
 - `pyproject.toml` - Project configuration
+- `.pre-commit-config.yaml` - Pre-commit hooks
+- `.github/workflows/` - CI/CD workflows
 
 ## License
 
@@ -305,13 +390,19 @@ For commercial licensing inquiries, contact: vindao@outlook.com
 
 Contributions are welcome! Please feel free to submit issues and pull requests.
 
-### Development Setup
+### Contributing Guidelines
 
-```bash
-git clone https://github.com/vindao/vindao_agents.git
-cd vindao_agents
-uv pip install -e ".[dev]"
-```
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Install development dependencies (`uv sync --all-groups`)
+4. Install pre-commit hooks (`uv run pre-commit install`)
+5. Make your changes
+6. Run all quality checks (`uv run pre-commit run --all-files`)
+7. Commit your changes (`git commit -m 'Add amazing feature'`)
+8. Push to the branch (`git push origin feature/amazing-feature`)
+9. Open a Pull Request
+
+**Note:** Pull requests will automatically be formatted by our CI. Ensure all linting and type checking passes.
 
 ## Support
 

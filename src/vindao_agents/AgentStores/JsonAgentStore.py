@@ -1,9 +1,8 @@
 
 # stdlib
+import json
 from pathlib import Path
 from typing import TYPE_CHECKING
-import json
-
 
 # local
 from .AgentStore import AgentStore
@@ -19,7 +18,7 @@ class JsonAgentStore(AgentStore):
             path = Path(agent.config.user_data_dir) / f"{agent.state.session_id}.json"
         else:
             path = Path(path)
-        
+
         data = {
             "config": agent.config.model_dump(),
             "state": agent.state.model_dump(),

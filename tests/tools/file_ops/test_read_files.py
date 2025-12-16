@@ -1,7 +1,6 @@
 """Tests for read_file and read_files."""
 
 # stdlib
-from pathlib import Path
 
 # third party
 import pytest

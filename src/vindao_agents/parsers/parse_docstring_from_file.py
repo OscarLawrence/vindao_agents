@@ -1,7 +1,7 @@
 """Parse docstring from Python file using AST."""
 # stdlib
-from pathlib import Path
 import ast
+from pathlib import Path
 
 
 def parse_docstring_from_file(file_path: Path) -> str | None:

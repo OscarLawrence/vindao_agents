@@ -1,7 +1,8 @@
 """Tests for path resolution utilities."""
-import pytest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+
+import pytest
 
 from vindao_agents.utils.path_resolution import resolve_path, resolve_path_with_fallbacks
 

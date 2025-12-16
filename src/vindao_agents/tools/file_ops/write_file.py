@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+
 def write_file(path: str, content: str) -> str:
     """Write content to a specified file."""
     p = Path(path)

@@ -2,10 +2,11 @@
 
 # stdlib
 import inspect
-from typing import Callable
+from collections.abc import Callable
 
 # local
-from vindao_agents.formatters.format_exception import format_exception 
+from vindao_agents.formatters.format_exception import format_exception
+
 
 class Tool:
     """Function wrapper extracting metadata and parameters for dynamic tool registration and execution."""
@@ -22,7 +23,7 @@ class Tool:
             return self.source + '\n\n'
         else:
             return f"def {self.name}{self.signature}\n\t\"\"\"{self.description}\"\"\"\n\n"
-        
+
     def __call__(self, *args, **kwargs) -> str:
         """Invoke the wrapped function with the extracted parameters."""
         try:

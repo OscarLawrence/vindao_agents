@@ -1,7 +1,6 @@
 """Tests for the logging utility module."""
 import logging
 from unittest.mock import MagicMock, patch
-import pytest
 
 from vindao_agents.utils.logger import AgentLogger, get_default_logger
 

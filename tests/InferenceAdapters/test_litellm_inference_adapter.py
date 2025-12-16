@@ -1,11 +1,10 @@
 """Tests for LiteLLM Inference Adapter."""
 
 # third party
-import pytest
 
 # local
 from vindao_agents.InferenceAdapters.LiteLLMInferenceAdapter import LiteLLMInferenceAdapter
-from vindao_agents.models.messages import SystemMessage, UserMessage, AssistantMessage, ToolMessage
+from vindao_agents.models.messages import AssistantMessage, SystemMessage, ToolMessage, UserMessage
 from vindao_agents.models.tool import ToolCall
 
 
@@ -31,6 +30,7 @@ class TestLiteLLMInferenceAdapter:
 
     def test_completion_retry(self, monkeypatch):
         from unittest.mock import MagicMock
+
         import litellm
 
         messages = [UserMessage(content="Test content")]

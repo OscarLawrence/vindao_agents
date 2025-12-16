@@ -1,7 +1,7 @@
 """Tests for ConsoleFormatter."""
-import sys
 from io import StringIO
 from unittest.mock import Mock, patch
+
 import pytest
 
 from vindao_agents.formatters import ConsoleFormatter

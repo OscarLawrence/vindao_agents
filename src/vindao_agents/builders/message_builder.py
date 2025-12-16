@@ -4,13 +4,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from vindao_agents.models.agent import AgentConfig
     from vindao_agents.Tool import Tool
     from vindao_agents.ToolParsers import ToolParser
-    from vindao_agents.models.agent import AgentConfig
 
-from vindao_agents.models.messages import SystemMessage
-from vindao_agents.loaders import load_system_message_template
 from vindao_agents.formatters import format_prompt
+from vindao_agents.loaders import load_system_message_template
+from vindao_agents.models.messages import SystemMessage
 
 
 class MessageBuilder:

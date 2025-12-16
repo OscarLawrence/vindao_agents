@@ -1,11 +1,11 @@
 """Tests for MessageBuilder."""
-from pathlib import Path
 from unittest.mock import Mock, patch
+
 import pytest
 
 from vindao_agents.builders import MessageBuilder
-from vindao_agents.models.messages import SystemMessage
 from vindao_agents.models.agent import AgentConfig
+from vindao_agents.models.messages import SystemMessage
 from vindao_agents.Tool import Tool
 
 

@@ -1,7 +1,8 @@
 """Load message objects from a list of dictionaries."""
 
 # local
-from vindao_agents.models.messages import SystemMessage, AssistantMessage, UserMessage, ToolMessage, MessageType
+from vindao_agents.models.messages import AssistantMessage, MessageType, SystemMessage, ToolMessage, UserMessage
+
 
 def load_messages_from_dicts(dicts: list[dict]) -> list[MessageType]:
     messages = []

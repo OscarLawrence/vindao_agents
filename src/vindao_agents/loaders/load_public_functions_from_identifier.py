@@ -1,7 +1,7 @@
 """Loader for public functions from a module identifier."""
 
 # stdlib
-from typing import Callable
+from collections.abc import Callable
 
 
 def load_public_functions_from_identifier(identifier: str) -> list[tuple[str, Callable]]:
@@ -10,7 +10,7 @@ def load_public_functions_from_identifier(identifier: str) -> list[tuple[str, Ca
     import inspect
     try:
         module = importlib.import_module(identifier)
-    except ModuleNotFoundError as e:
+    except ModuleNotFoundError:
         module = importlib.import_module("vindao_agents." + identifier)
     loaded = []
     for name, obj in inspect.getmembers(module):
