@@ -28,3 +28,13 @@ class TestFormatException:
             assert "ZeroDivisionError" in formatted
             assert "faulty_function" in formatted
             assert "1 / 0" in formatted
+
+    def test_no_duplicate_exception_message(self):
+        """Test that exception message doesn't appear twice (Issue #10)."""
+        try:
+            raise ValueError("test error message")
+        except Exception as e:
+            formatted = format_exception(e)
+            # Count occurrences of the exception message
+            count = formatted.count("ValueError: test error message")
+            assert count == 1, f"Exception message appears {count} times, expected 1"

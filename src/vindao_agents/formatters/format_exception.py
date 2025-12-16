@@ -22,4 +22,4 @@ def format_exception(exc: Exception, function: Callable | None = None) -> str:
                 capture = False
         tb_lines = filtered_lines
 
-    return "".join(tb_lines).strip() + f"{type(exc).__name__}: {str(exc)}"
+    return "".join(tb_lines).strip()

@@ -1,5 +1,6 @@
 """Multi-file reader tool."""
 from .read_file import read_file
+from ...formatters.format_exception import format_exception
 
 
 def read_files(*paths: str) -> str:
@@ -10,5 +11,5 @@ def read_files(*paths: str) -> str:
         try:
             response += read_file(file_path)
         except Exception as e:
-            response += f"{e.with_traceback(None)}"
+            response += format_exception(e)
     return response
