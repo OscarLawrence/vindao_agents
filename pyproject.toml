@@ -8,8 +8,10 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "fastapi[standard]>=0.120.1",
     "jinja2>=3.1.6",
     "litellm>=1.78.7",
+    "markdown>=3.9",
     "prompt-toolkit>=3.0.52",
     "pydantic>=2.12.3",
     "python-frontmatter>=1.1.0",
@@ -31,6 +33,6 @@ dev = [
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
-testpaths = ["src/vindao_agents", "tests"]
-python_files = ["*.py"]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
 anyio_mode = "auto"

@@ -1,0 +1,70 @@
+{
+    "config": {
+        "name": "DefaultAgent",
+        "provider": "openai",
+        "model": "gpt-4.1-nano",
+        "tools": [
+            "tools.file_ops",
+            "tools.bash"
+        ],
+        "max_iterations": 15,
+        "behavior": "You are an honest assistent working in a self extending system. You always answer with brutal honesty and value simplicity over unnecessary complexity.",
+        "auto_save": true,
+        "user_data_dir": "/home/vindao/Documents/vindao_agents/.vindao_agents",
+        "system_prompt_data": {},
+        "tools_with_source": false,
+        "inference_adapter": "litellm",
+        "parser": "at_syntax"
+    },
+    "state": {
+        "session_id": "7c76e24f50dd4d52a3d5a7fcb46ba79c",
+        "created_at": 1764756128.600687,
+        "updated_at": 1764756135.993965,
+        "messages": [
+            {
+                "content": "You are based on the gpt-4.1-nano model\nYour name is DefaultAgent\n\nYou will be provided with a set of available python functions.\n\nYou can call the functions anywhere within your response like a normal python function, but need to prepend your call with a @ symbol.\nFunctions will be executed immediately and you will be reinvoked with the functions response available\nYou will be reinvoked until no function call is detected within your response\nYou can disable tool calling by starting your response with: @DISABLE_TOOL_CALL@\n\n## Example function calls\n\n@read_file('README.md')\n@list_dir('.')\n@sum((1, 3, 200))\n\nThe following functions are available to you:\n\ndef list_dir(path: str = '.', show_hidden: bool = False, ignore: list[str] = ['__pycache__']) -> str\n\t\"\"\"List files and directories in the given path. For Python files and packages, include their docstrings.\"\"\"\n\ndef read_file(path: str) -> str\n\t\"\"\"Read the content of a specified file.\"\"\"\n\ndef read_files(*paths: str) -> str\n\t\"\"\"Read and return the contents of multiple files.\"\"\"\n\ndef write_file(path: str, content: str) -> str\n\t\"\"\"Write content to a specified file.\"\"\"\n\ndef bash(cmd: str)\n\t\"\"\"Execute a bash command and return its output or error message.\"\"\"\n\nMake sure to always use the exact name of the function and follow valid python syntax\n\nYou are an honest assistent working in a self extending system. You always answer with brutal honesty and value simplicity over unnecessary complexity.",
+                "id": "d68574e142034c7aa420e47ea85fee81",
+                "role": "system"
+            },
+            {
+                "content": "Please read test.py",
+                "id": "beeec186755946c6802f655e45652703",
+                "role": "user",
+                "name": null
+            },
+            {
+                "content": "@read_file('test.py')",
+                "id": "93182a99123849c1988c9ae6139a4f9c",
+                "role": "assistant",
+                "reasoning_content": "",
+                "name": null,
+                "tool_call": {
+                    "name": "read_file",
+                    "call": "read_file('test.py')",
+                    "id": "a93f127b4f0c46a88605fb12e5849353",
+                    "result": "from vindao_agents import Agent\n\nagent = Agent.from_name(\"DefaultAgent\")\n\nagent.chat()"
+                }
+            },
+            {
+                "content": "from vindao_agents import Agent\n\nagent = Agent.from_name(\"DefaultAgent\")\n\nagent.chat()",
+                "id": "373a3da8cf1c4a469f4a117f4e84f381",
+                "role": "tool",
+                "name": "read_file",
+                "tool_call": {
+                    "name": "read_file",
+                    "call": "read_file('test.py')",
+                    "id": "a93f127b4f0c46a88605fb12e5849353",
+                    "result": "from vindao_agents import Agent\n\nagent = Agent.from_name(\"DefaultAgent\")\n\nagent.chat()"
+                }
+            },
+            {
+                "content": "The content of `test.py` is:\n\n```python\nfrom vindao_agents import Agent\n\nagent = Agent.from_name(\"DefaultAgent\")\n\nagent.chat()\n```",
+                "id": "8039c9a692ab4c708aa1f45497e3be40",
+                "role": "assistant",
+                "reasoning_content": "",
+                "name": null,
+                "tool_call": null
+            }
+        ]
+    }
+}

@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+ol {
+    list-style-type: decimal;
+    margin-left: 1rem;
+}

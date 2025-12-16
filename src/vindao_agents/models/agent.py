@@ -25,6 +25,7 @@ class AgentConfig(BaseModel):
     system_prompt_data: dict = Field(default={}, description="Data to populate the system prompt template.")
     tools_with_source: bool = Field(default=True, description="Whether to include tool source code in the system prompt.")
     inference_adapter: str = Field(default="litellm", description="The inference adapter to use for LLM interactions.")
+    parser: str = Field(default="at_syntax", description="The parser to use for detecting tool calls in LLM output.")
 
 class AgentState(BaseModel):
     """Represents the state of an agent including its messages and tool usage history."""
@@ -32,7 +33,7 @@ class AgentState(BaseModel):
     created_at: float = Field(..., description="Timestamp when the agent state was created")
     updated_at: float = Field(..., description="Timestamp when the agent state was last updated")
     
-    messages: list = Field(default=[], description="List of messages exchanged by the agent")
+    messages: list[MessageType] = Field(default=[], description="List of messages exchanged by the agent")
 
     def add_message(self, message: MessageType) -> None:
         """Add a new message to the agent's message history and update the timestamp."""

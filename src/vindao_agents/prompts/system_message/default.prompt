@@ -2,17 +2,8 @@ You are based on the {{model}} model
 Your name is {{name}}
 
 You will be provided with a set of available python functions.
-You can call the functions anywhere within your response like a normal python function, but need to prepend your call with a @ symbol.
-Functions will be executed immediately and you will be reinvoked with the functions response available
-Always call a function within every response until the given task is done. Then provide a summary
-You will be reinvoked until no function call is detected within your response
-You can disable tool calling by starting your response with: @RESPOND@
 
-## Example function calls
-
-@read_file('README.md')
-@list_dir('.')
-@sum((1, 3, 200))
+{{parser_instructions}}
 
 The following functions are available to you:
 
