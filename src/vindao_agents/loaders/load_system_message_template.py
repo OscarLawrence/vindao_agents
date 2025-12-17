@@ -2,7 +2,6 @@
 
 # stdlib
 from pathlib import Path
-from typing import cast
 
 # local
 from vindao_agents.utils import resolve_path_with_fallbacks
