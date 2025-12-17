@@ -8,7 +8,7 @@ from vindao_agents.loaders.load_markdown_with_frontmatter import load_markdown_w
 def load_agent_from_markdown(path: Path | str) -> dict:
     """Load an Agent instance from a markdown file with frontmatter."""
     path = Path(path)
-    metadata, behavior = load_markdown_with_frontmatter(path)
+    metadata, behavior = load_markdown_with_frontmatter(str(path))
     return {
         "name": path.stem,
         "provider": metadata.get("provider", "ollama"),

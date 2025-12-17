@@ -2,6 +2,7 @@
 
 # stdlib
 from pathlib import Path
+from typing import cast
 
 # local
 from vindao_agents.utils import resolve_path_with_fallbacks
@@ -24,7 +25,7 @@ def load_system_message_template(model: str, user_data_dir: str | Path) -> str:
         str: The template content
     """
     filenames = [f"{model}.prompt", "default.prompt"]
-    search_dirs = [
+    search_dirs: list[str | Path] = [
         Path(user_data_dir) / "prompts" / "system_message",
         Path(__file__).parent.parent / "prompts" / "system_message",
     ]

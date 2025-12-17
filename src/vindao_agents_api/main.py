@@ -63,7 +63,7 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
         data = await websocket.receive_text()
-        agent = Agent.from_json(data)
+        agent = Agent.from_json_string(data)
         for chunk, chunk_type in agent.invoke():
             if chunk_type == "content":
                 await websocket.send_json({"type": "content", "data": chunk})

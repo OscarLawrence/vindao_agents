@@ -17,6 +17,7 @@ from vindao_agents.utils import get_default_logger
 class LiteLLMInferenceAdapter(InferenceAdapter):
     def __init__(self, provider: str, model: str):
         """Initialize adapter with provider and model configuration."""
+        super().__init__(provider, model)
         self.model_str = f"{provider}/{model}"
         self.logger = get_default_logger()
 

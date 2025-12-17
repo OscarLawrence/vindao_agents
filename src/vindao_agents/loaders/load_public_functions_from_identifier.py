@@ -2,9 +2,10 @@
 
 # stdlib
 from collections.abc import Callable
+from typing import Any
 
 
-def load_public_functions_from_identifier(identifier: str) -> list[tuple[str, Callable]]:
+def load_public_functions_from_identifier(identifier: str) -> list[tuple[str, Callable[..., Any]]]:
     """Load public functions from a given module identifier."""
     import importlib
     import inspect
@@ -13,7 +14,7 @@ def load_public_functions_from_identifier(identifier: str) -> list[tuple[str, Ca
         module = importlib.import_module(identifier)
     except ModuleNotFoundError:
         module = importlib.import_module("vindao_agents." + identifier)
-    loaded = []
+    loaded: list[tuple[str, Callable[..., Any]]] = []
     for name, obj in inspect.getmembers(module):
         if name.startswith("_"):
             continue

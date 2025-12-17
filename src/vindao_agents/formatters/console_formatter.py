@@ -43,7 +43,10 @@ class ConsoleFormatter:
             sys.stdout.flush()
         elif chunk_type == "tool":
             # Format and display tool call results
-            sys.stdout.write(f" =>\n{chunk.result}\n")
+            if isinstance(chunk, str):
+                sys.stdout.write(f" =>\n{chunk}\n")
+            else:
+                sys.stdout.write(f" =>\n{chunk.result}\n")
             sys.stdout.flush()
 
     def display_message(self, message: str) -> None:

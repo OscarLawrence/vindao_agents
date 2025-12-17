@@ -5,7 +5,7 @@ from vindao_agents.models.messages import AssistantMessage, MessageType, SystemM
 
 
 def load_messages_from_dicts(dicts: list[dict]) -> list[MessageType]:
-    messages = []
+    messages: list[MessageType] = []
     for message_dict in dicts:
         message_type = message_dict.get("role")
         if message_type == "system":
