@@ -1,5 +1,5 @@
-from .AtSyntaxParser import AtSyntaxParser
-from .ToolParser import ToolParser
+from .AtSyntaxParser import AtSyntaxParser as AtSyntaxParser
+from .ToolParser import ToolParser as ToolParser
 
 # Registry of available parsers
 parsers = {

@@ -2,4 +2,4 @@
 
 __version__ = "0.1.0"
 
-from .Agent import Agent
+from .Agent import Agent as Agent
