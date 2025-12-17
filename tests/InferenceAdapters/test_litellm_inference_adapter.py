@@ -9,7 +9,6 @@ from vindao_agents.models.tool import ToolCall
 
 
 class TestLiteLLMInferenceAdapter:
-
     adapter = LiteLLMInferenceAdapter(provider="ollama", model="qwen2.5:0.5b")
 
     def test_formatMessages(self):
@@ -18,7 +17,7 @@ class TestLiteLLMInferenceAdapter:
             SystemMessage(content="System content"),
             UserMessage(content="User content"),
             AssistantMessage(content="Assistant content"),
-            ToolMessage(content="Tool content", name="sample_tool", tool_call=tool_call)
+            ToolMessage(content="Tool content", name="sample_tool", tool_call=tool_call),
         ]
 
         formatted = self.adapter._formatMessages(messages)

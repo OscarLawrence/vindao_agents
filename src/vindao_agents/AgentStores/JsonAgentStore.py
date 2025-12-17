@@ -1,4 +1,3 @@
-
 # stdlib
 import json
 from pathlib import Path
@@ -10,8 +9,8 @@ from .AgentStore import AgentStore
 if TYPE_CHECKING:
     from vindao_agents.Agent import Agent
 
-class JsonAgentStore(AgentStore):
 
+class JsonAgentStore(AgentStore):
     def save(self, agent: "Agent", path: str | Path | None = None) -> None:
         """Save the state of the agent as a JSON file."""
         if path is None:
@@ -25,5 +24,5 @@ class JsonAgentStore(AgentStore):
         }
 
         path.parent.mkdir(parents=True, exist_ok=True)
-        with open(path, 'w', encoding='utf-8') as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=4)

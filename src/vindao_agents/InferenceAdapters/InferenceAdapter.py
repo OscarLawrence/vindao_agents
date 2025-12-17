@@ -11,6 +11,8 @@ from vindao_agents.models.messages import MessageType
 
 class InferenceAdapter(ABC):
     @abstractmethod
-    def complete_chat(self, messages: list[MessageType], max_retries: int = 5, retry: int = 0) -> Generator[tuple[str, Literal['reasoning', 'content']], None, None]:
+    def complete_chat(
+        self, messages: list[MessageType], max_retries: int = 5, retry: int = 0
+    ) -> Generator[tuple[str, Literal["reasoning", "content"]], None, None]:
         """Abstract method for chat completion."""
         pass

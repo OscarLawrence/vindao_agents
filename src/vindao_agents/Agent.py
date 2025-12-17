@@ -1,4 +1,5 @@
 """Agent orchestrator for managing AI agent interactions and tool execution."""
+
 # stdlib
 import json
 from datetime import UTC, datetime
@@ -30,8 +31,8 @@ from .models.agent import AgentConfig, AgentState
 
 load_dotenv()
 
-class Agent:
 
+class Agent:
     tools: dict[str, Tool]
     config: AgentConfig
     state: AgentState
@@ -41,25 +42,25 @@ class Agent:
     logger: AgentLogger
 
     def __init__(
-            self,
-            name: str = 'Momo',
-            provider: str = 'ollama',
-            model: str = 'qwen2.5:0.5b',
-            tools: list[str] = [],
-            behavior: str = "",
-            max_iterations: int = 15,
-            auto_save: bool = True,
-            user_data_dir: str | Path = getenv("USER_DATA_DIR", Path.cwd() / ".vindao_agents"),
-            system_prompt_data: dict | None = None,
-            tools_with_source: bool = True,
-            session_id: str = uuid().hex,
-            created_at: float = datetime.now(UTC).timestamp(),
-            updated_at: float = datetime.now(UTC).timestamp(),
-            messages: list[MessageType] | None = None,
-            inference_adapter: InferenceAdapter | str = LiteLLMInferenceAdapter,
-            store: AgentStore | str = JsonAgentStore,
-            parser: ToolParser | str = AtSyntaxParser,
-            logger: AgentLogger | None = None,
+        self,
+        name: str = "Momo",
+        provider: str = "ollama",
+        model: str = "qwen2.5:0.5b",
+        tools: list[str] = [],
+        behavior: str = "",
+        max_iterations: int = 15,
+        auto_save: bool = True,
+        user_data_dir: str | Path = getenv("USER_DATA_DIR", Path.cwd() / ".vindao_agents"),
+        system_prompt_data: dict | None = None,
+        tools_with_source: bool = True,
+        session_id: str = uuid().hex,
+        created_at: float = datetime.now(UTC).timestamp(),
+        updated_at: float = datetime.now(UTC).timestamp(),
+        messages: list[MessageType] | None = None,
+        inference_adapter: InferenceAdapter | str = LiteLLMInferenceAdapter,
+        store: AgentStore | str = JsonAgentStore,
+        parser: ToolParser | str = AtSyntaxParser,
+        logger: AgentLogger | None = None,
     ):
         self.config = AgentConfig(
             name=name,
@@ -86,18 +87,10 @@ class Agent:
         if not messages:
             message_builder = MessageBuilder()
             system_message = message_builder.build_system_message(
-                model=self.config.model,
-                tools=self.tools,
-                parser=self.parser,
-                config=self.config
+                model=self.config.model, tools=self.tools, parser=self.parser, config=self.config
             )
             messages = [system_message]
-        self.state = AgentState(
-            session_id=session_id,
-            created_at=created_at,
-            updated_at=updated_at,
-            messages=messages
-        )
+        self.state = AgentState(session_id=session_id, created_at=created_at, updated_at=updated_at, messages=messages)
         if isinstance(inference_adapter, str):
             inference_adapter = adapters.get(inference_adapter, LiteLLMInferenceAdapter)
         # If inference_adapter is a class, instantiate it; if it's already an instance, use it directly
@@ -119,44 +112,43 @@ class Agent:
         tool_call_enabled = True
 
         if iteration == max_iterations - 1:
-            self.state.add_message(UserMessage(content="You have reached the maximum number of iterations. Please provide a summary without further tool usage."))
+            self.state.add_message(
+                UserMessage(
+                    content="You have reached the maximum number of iterations. Please provide a summary without further tool usage."
+                )
+            )
             tool_call_enabled = False
 
         for chunk, chunk_type in self.inference_adapter.complete_chat(self.state.messages):
-
             if chunk_type == "reasoning":
                 accumulated_reasoning += chunk
 
             elif chunk_type == "content":
                 accumulated_content += chunk
             yield chunk, chunk_type
-            if accumulated_content.startswith('@DISABLE_TOOL_CALL@'):
+            if accumulated_content.startswith("@DISABLE_TOOL_CALL@"):
                 tool_call_enabled = False
             if tool_call_enabled:
                 call = self.parser.parse(accumulated_content, list(self.tools.keys()))
                 if call:
                     tool_name, tool_call = call
                     result = str(execute_tool_call(tool_call, self.tools[tool_name]))
-                    tool_call = ToolCall(
-                        name=tool_name,
-                        call=tool_call,
-                        result=result
+                    tool_call = ToolCall(name=tool_name, call=tool_call, result=result)
+                    yield tool_call, "tool"
+                    self.state.add_message(
+                        AssistantMessage(
+                            content=accumulated_content,
+                            reasoning_content=accumulated_reasoning.strip(),
+                            tool_call=tool_call,
+                        )
                     )
-                    yield tool_call, 'tool'
-                    self.state.add_message(AssistantMessage(
-                        content=accumulated_content,
-                        reasoning_content=accumulated_reasoning.strip(),
-                        tool_call=tool_call
-                    ))
-                    self.state.add_message(ToolMessage(
-                        content=tool_call.result,
-                        name=tool_call.name,
-                        tool_call=tool_call
-                    ))
+                    self.state.add_message(
+                        ToolMessage(content=tool_call.result, name=tool_call.name, tool_call=tool_call)
+                    )
                     return (yield from self.invoke(iteration + 1, max_iterations=max_iterations))
 
-        if accumulated_content.startswith('@DISABLE_TOOL_CALL@'):
-            accumulated_content = accumulated_content.replace('@DISABLE_TOOL_CALL@', '', 1).lstrip()
+        if accumulated_content.startswith("@DISABLE_TOOL_CALL@"):
+            accumulated_content = accumulated_content.replace("@DISABLE_TOOL_CALL@", "", 1).lstrip()
         self.state.add_message(AssistantMessage(content=accumulated_content, reasoning_content=accumulated_reasoning))
         if self.config.auto_save:
             self.store.save(self)
@@ -174,7 +166,7 @@ class Agent:
         try:
             while True:
                 user_input = input("\n\nYou: ")
-                if user_input.lower() in ['exit', 'quit']:
+                if user_input.lower() in ["exit", "quit"]:
                     formatter.display_message(f"Exiting chat session.\nSession ID: {self.state.session_id}")
                     break
                 for chunk, chunk_type in self.instruct(user_input):
@@ -183,13 +175,10 @@ class Agent:
         except KeyboardInterrupt:
             formatter.display_message(f"Exiting chat session.\nSession ID: {self.state.session_id}")
 
-
     @classmethod
     def from_dict(cls, data: dict) -> "Agent":
         """Create an Agent instance from a dictionary."""
-        return cls(
-            **data
-        )
+        return cls(**data)
 
     @classmethod
     def from_json_string(cls, data: str) -> "Agent":
@@ -198,11 +187,7 @@ class Agent:
         config_data = data.get("config", {})
         state_data = data.get("state", {})
         messages = load_messages_from_dicts(state_data.get("messages", []))
-        data = {
-            **config_data,
-            **state_data,
-            "messages": messages
-        }
+        data = {**config_data, **state_data, "messages": messages}
         return cls.from_dict(data)
 
     @classmethod
@@ -226,10 +211,7 @@ class Agent:
     @classmethod
     def from_name(cls, name: str) -> "Agent":
         """Create an Agent instance from a predefined agent name."""
-        search_dirs = [
-            Path.cwd() / "agents",
-            Path(__file__).parent / "agents"
-        ]
+        search_dirs = [Path.cwd() / "agents", Path(__file__).parent / "agents"]
         agent_path = resolve_path(f"{name}.md", search_dirs)
         return cls.from_markdown(agent_path)
 
@@ -241,4 +223,3 @@ class Agent:
                 loaded_tools[name] = Tool(f)
 
         return loaded_tools
-

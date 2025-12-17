@@ -102,6 +102,7 @@ class TestAgentInitialization:
 
 class TestAgentInvoke:
     """Tests for Agent invoke method."""
+
     pass
 
 
@@ -110,23 +111,15 @@ class TestAgentInstruct:
 
     def test_instruct_adds_user_message(self, tmp_path):
         """Test that instruct adds user message to state."""
-        mock_adapter = MockInferenceAdapter(
-            "ollama", "qwen2.5:0.5b", responses=[("response", "content")]
-        )
+        mock_adapter = MockInferenceAdapter("ollama", "qwen2.5:0.5b", responses=[("response", "content")])
 
-        agent = Agent(
-            user_data_dir=tmp_path,
-            auto_save=False,
-            inference_adapter=mock_adapter
-        )
+        agent = Agent(user_data_dir=tmp_path, auto_save=False, inference_adapter=mock_adapter)
         initial_message_count = len(agent.state.messages)
 
         list(agent.instruct("Test instruction"))
 
         assert len(agent.state.messages) > initial_message_count
-        user_messages = [
-            msg for msg in agent.state.messages if isinstance(msg, UserMessage)
-        ]
+        user_messages = [msg for msg in agent.state.messages if isinstance(msg, UserMessage)]
         assert any(msg.content == "Test instruction" for msg in user_messages)
 
     def test_instruct_yields_chunks(self, tmp_path):
@@ -137,11 +130,7 @@ class TestAgentInstruct:
             responses=[("Hello", "content"), (" world", "content")],
         )
 
-        agent = Agent(
-            user_data_dir=tmp_path,
-            auto_save=False,
-            inference_adapter=mock_adapter
-        )
+        agent = Agent(user_data_dir=tmp_path, auto_save=False, inference_adapter=mock_adapter)
 
         chunks = list(agent.instruct("Test"))
         assert len(chunks) > 0
@@ -154,17 +143,11 @@ class TestAgentChat:
     @patch("builtins.input")
     def test_chat_exit_command(self, mock_input, tmp_path):
         """Test that chat exits on 'exit' command."""
-        mock_adapter = MockInferenceAdapter(
-            "ollama", "qwen2.5:0.5b", responses=[("response", "content")]
-        )
+        mock_adapter = MockInferenceAdapter("ollama", "qwen2.5:0.5b", responses=[("response", "content")])
 
         mock_input.return_value = "exit"
 
-        agent = Agent(
-            user_data_dir=tmp_path,
-            auto_save=False,
-            inference_adapter=mock_adapter
-        )
+        agent = Agent(user_data_dir=tmp_path, auto_save=False, inference_adapter=mock_adapter)
 
         # Mock the logger to capture calls
         mock_logger = MagicMock()
@@ -179,17 +162,11 @@ class TestAgentChat:
     @patch("builtins.input")
     def test_chat_keyboard_interrupt(self, mock_input, tmp_path):
         """Test that chat handles keyboard interrupt gracefully."""
-        mock_adapter = MockInferenceAdapter(
-            "ollama", "qwen2.5:0.5b", responses=[("response", "content")]
-        )
+        mock_adapter = MockInferenceAdapter("ollama", "qwen2.5:0.5b", responses=[("response", "content")])
 
         mock_input.side_effect = KeyboardInterrupt()
 
-        agent = Agent(
-            user_data_dir=tmp_path,
-            auto_save=False,
-            inference_adapter=mock_adapter
-        )
+        agent = Agent(user_data_dir=tmp_path, auto_save=False, inference_adapter=mock_adapter)
 
         # Mock the logger to capture calls
         mock_logger = MagicMock()
@@ -204,6 +181,7 @@ class TestAgentChat:
 
 class TestAgentSave:
     """Tests for Agent save method."""
+
     pass
 
 
@@ -377,9 +355,7 @@ class TestAgentLoadTools:
 
         mock_load.return_value = [("sample_func", sample_func)]
 
-        agent = Agent(
-            tools=["test_module"], user_data_dir=tmp_path, auto_save=False
-        )
+        agent = Agent(tools=["test_module"], user_data_dir=tmp_path, auto_save=False)
 
         assert "sample_func" in agent.tools
         assert isinstance(agent.tools["sample_func"], Tool)
@@ -400,9 +376,7 @@ class TestAgentBuildSystemMessage:
     def test_system_message_includes_behavior(self, tmp_path):
         """Test that system message includes behavior."""
         behavior = "Be very helpful and friendly"
-        agent = Agent(
-            behavior=behavior, user_data_dir=tmp_path, auto_save=False
-        )
+        agent = Agent(behavior=behavior, user_data_dir=tmp_path, auto_save=False)
 
         system_message = agent.state.messages[0]
         assert behavior in system_message.content

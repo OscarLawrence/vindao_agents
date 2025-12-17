@@ -9,7 +9,6 @@ from vindao_agents.models.messages import AssistantMessage, SystemMessage, ToolM
 
 class TestLoadMessagesFromDicts:
     def test_load_messages_from_dicts(self):
-
         tool_call_dict = {"name": "test_tool", "call": "test_call", "result": "test_result"}
         dicts = [
             {"role": "system", "content": "System message"},

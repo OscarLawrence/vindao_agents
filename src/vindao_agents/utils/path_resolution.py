@@ -1,4 +1,5 @@
 """Centralized path resolution utilities for vindao_agents framework."""
+
 from pathlib import Path
 
 
@@ -22,15 +23,11 @@ def resolve_path(filename: str, search_dirs: list[str | Path]) -> Path:
             return candidate
 
     raise FileNotFoundError(
-        f"Could not find '{filename}' in any of the following directories: "
-        f"{[str(Path(d)) for d in search_dirs]}"
+        f"Could not find '{filename}' in any of the following directories: {[str(Path(d)) for d in search_dirs]}"
     )
 
 
-def resolve_path_with_fallbacks(
-    filenames: list[str],
-    search_dirs: list[str | Path]
-) -> Path:
+def resolve_path_with_fallbacks(filenames: list[str], search_dirs: list[str | Path]) -> Path:
     """
     Resolve a file path by trying multiple filenames across multiple directories.
 
@@ -54,6 +51,5 @@ def resolve_path_with_fallbacks(
                 return candidate
 
     raise FileNotFoundError(
-        f"Could not find any of {filenames} in any of the following directories: "
-        f"{[str(Path(d)) for d in search_dirs]}"
+        f"Could not find any of {filenames} in any of the following directories: {[str(Path(d)) for d in search_dirs]}"
     )

@@ -11,7 +11,6 @@ from vindao_agents.tools.file_ops.read_files import read_files
 
 
 class TestReadFile:
-
     def test_read_existing_file(self, tmp_path):
         """Test reading an existing file."""
         test_file = tmp_path / "test.txt"
@@ -27,7 +26,6 @@ class TestReadFile:
 
 
 class TestReadFiles:
-
     def test_read_multiple_files(self, tmp_path):
         """Test reading multiple existing files."""
         file1 = tmp_path / "file1.txt"

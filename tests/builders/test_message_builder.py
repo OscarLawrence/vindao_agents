@@ -1,4 +1,5 @@
 """Tests for MessageBuilder."""
+
 from unittest.mock import Mock, patch
 
 import pytest
@@ -15,9 +16,11 @@ class TestMessageBuilder:
     @pytest.fixture
     def sample_tool(self):
         """Create a sample tool for testing."""
+
         def example_function(arg: str) -> str:
             """Example function for testing."""
             return f"Result: {arg}"
+
         return Tool(example_function)
 
     @pytest.fixture
@@ -42,7 +45,7 @@ class TestMessageBuilder:
             system_prompt_data={"custom_key": "custom_value"},
             tools_with_source=False,
             inference_adapter="litellm",
-            parser="at_syntax"
+            parser="at_syntax",
         )
 
     @pytest.fixture
@@ -50,91 +53,64 @@ class TestMessageBuilder:
         """Create a MessageBuilder instance."""
         return MessageBuilder()
 
-    def test_build_system_message_returns_system_message(
-        self, message_builder, mock_parser, mock_config, sample_tool
-    ):
+    def test_build_system_message_returns_system_message(self, message_builder, mock_parser, mock_config, sample_tool):
         """Test that build_system_message returns a SystemMessage instance."""
         tools = {"example_function": sample_tool}
 
-        with patch('vindao_agents.builders.message_builder.load_system_message_template') as mock_load:
+        with patch("vindao_agents.builders.message_builder.load_system_message_template") as mock_load:
             mock_load.return_value = "Test template: {{ name }}, {{ behavior }}, {{ tools }}"
 
             result = message_builder.build_system_message(
-                model="test-model",
-                tools=tools,
-                parser=mock_parser,
-                config=mock_config
+                model="test-model", tools=tools, parser=mock_parser, config=mock_config
             )
 
             assert isinstance(result, SystemMessage)
             assert result.content is not None
 
-    def test_build_system_message_includes_agent_name(
-        self, message_builder, mock_parser, mock_config, sample_tool
-    ):
+    def test_build_system_message_includes_agent_name(self, message_builder, mock_parser, mock_config, sample_tool):
         """Test that the system message includes the agent name."""
         tools = {"example_function": sample_tool}
 
-        with patch('vindao_agents.builders.message_builder.load_system_message_template') as mock_load:
+        with patch("vindao_agents.builders.message_builder.load_system_message_template") as mock_load:
             mock_load.return_value = "Agent name: {{ name }}"
 
             result = message_builder.build_system_message(
-                model="test-model",
-                tools=tools,
-                parser=mock_parser,
-                config=mock_config
+                model="test-model", tools=tools, parser=mock_parser, config=mock_config
             )
 
             assert "TestAgent" in result.content
 
-    def test_build_system_message_includes_behavior(
-        self, message_builder, mock_parser, mock_config, sample_tool
-    ):
+    def test_build_system_message_includes_behavior(self, message_builder, mock_parser, mock_config, sample_tool):
         """Test that the system message includes the behavior."""
         tools = {"example_function": sample_tool}
 
-        with patch('vindao_agents.builders.message_builder.load_system_message_template') as mock_load:
+        with patch("vindao_agents.builders.message_builder.load_system_message_template") as mock_load:
             mock_load.return_value = "Behavior: {{ behavior }}"
 
             result = message_builder.build_system_message(
-                model="test-model",
-                tools=tools,
-                parser=mock_parser,
-                config=mock_config
+                model="test-model", tools=tools, parser=mock_parser, config=mock_config
             )
 
             assert "Be helpful and concise" in result.content
 
-    def test_build_system_message_includes_parser_instructions(
-        self, message_builder, mock_parser, mock_config
-    ):
+    def test_build_system_message_includes_parser_instructions(self, message_builder, mock_parser, mock_config):
         """Test that the system message includes parser instructions."""
-        with patch('vindao_agents.builders.message_builder.load_system_message_template') as mock_load:
+        with patch("vindao_agents.builders.message_builder.load_system_message_template") as mock_load:
             mock_load.return_value = "Parser: {{ parser_instructions }}"
 
             result = message_builder.build_system_message(
-                model="test-model",
-                tools={},
-                parser=mock_parser,
-                config=mock_config
+                model="test-model", tools={}, parser=mock_parser, config=mock_config
             )
 
             assert "Use @function_name(arg='value') syntax" in result.content
             mock_parser.get_instructions.assert_called_once()
 
-    def test_build_system_message_loads_correct_template(
-        self, message_builder, mock_parser, mock_config
-    ):
+    def test_build_system_message_loads_correct_template(self, message_builder, mock_parser, mock_config):
         """Test that the correct template is loaded based on model."""
-        with patch('vindao_agents.builders.message_builder.load_system_message_template') as mock_load:
+        with patch("vindao_agents.builders.message_builder.load_system_message_template") as mock_load:
             mock_load.return_value = "Template content"
 
-            message_builder.build_system_message(
-                model="gpt-4",
-                tools={},
-                parser=mock_parser,
-                config=mock_config
-            )
+            message_builder.build_system_message(model="gpt-4", tools={}, parser=mock_parser, config=mock_config)
 
             mock_load.assert_called_once_with("gpt-4", mock_config.user_data_dir)
 
@@ -154,6 +130,7 @@ class TestMessageBuilder:
 
     def test_serialize_tools_with_multiple_tools(self, message_builder):
         """Test serializing multiple tools."""
+
         def tool1():
             """First tool."""
             pass
@@ -162,10 +139,7 @@ class TestMessageBuilder:
             """Second tool."""
             pass
 
-        tools = {
-            "tool1": Tool(tool1),
-            "tool2": Tool(tool2)
-        }
+        tools = {"tool1": Tool(tool1), "tool2": Tool(tool2)}
 
         result = message_builder._serialize_tools(tools, include_source=False)
 
@@ -196,41 +170,29 @@ class TestMessageBuilder:
         message_builder._serialize_tools(tools, include_source=False)
         mock_tool.to_instruction.assert_called_with(include_source=False)
 
-    def test_build_system_message_includes_custom_prompt_data(
-        self, message_builder, mock_parser, mock_config
-    ):
+    def test_build_system_message_includes_custom_prompt_data(self, message_builder, mock_parser, mock_config):
         """Test that custom system prompt data is included."""
-        with patch('vindao_agents.builders.message_builder.load_system_message_template') as mock_load:
+        with patch("vindao_agents.builders.message_builder.load_system_message_template") as mock_load:
             mock_load.return_value = "Custom: {{ custom_key }}"
 
             result = message_builder.build_system_message(
-                model="test-model",
-                tools={},
-                parser=mock_parser,
-                config=mock_config
+                model="test-model", tools={}, parser=mock_parser, config=mock_config
             )
 
             assert "custom_value" in result.content
 
-    def test_build_system_message_includes_model_in_prompt_data(
-        self, message_builder, mock_parser, mock_config
-    ):
+    def test_build_system_message_includes_model_in_prompt_data(self, message_builder, mock_parser, mock_config):
         """Test that model is included in the prompt data."""
-        with patch('vindao_agents.builders.message_builder.load_system_message_template') as mock_load:
+        with patch("vindao_agents.builders.message_builder.load_system_message_template") as mock_load:
             mock_load.return_value = "Model: {{ model }}"
 
             result = message_builder.build_system_message(
-                model="special-model",
-                tools={},
-                parser=mock_parser,
-                config=mock_config
+                model="special-model", tools={}, parser=mock_parser, config=mock_config
             )
 
             assert "special-model" in result.content
 
-    def test_build_system_message_with_tools_and_source(
-        self, message_builder, mock_parser, sample_tool
-    ):
+    def test_build_system_message_with_tools_and_source(self, message_builder, mock_parser, sample_tool):
         """Test building system message with tools_with_source=True."""
         config = AgentConfig(
             name="TestAgent",
@@ -244,19 +206,16 @@ class TestMessageBuilder:
             system_prompt_data={},
             tools_with_source=True,  # Enable source code
             inference_adapter="litellm",
-            parser="at_syntax"
+            parser="at_syntax",
         )
 
         tools = {"example_function": sample_tool}
 
-        with patch('vindao_agents.builders.message_builder.load_system_message_template') as mock_load:
+        with patch("vindao_agents.builders.message_builder.load_system_message_template") as mock_load:
             mock_load.return_value = "Tools: {{ tools }}"
 
             result = message_builder.build_system_message(
-                model="test-model",
-                tools=tools,
-                parser=mock_parser,
-                config=config
+                model="test-model", tools=tools, parser=mock_parser, config=config
             )
 
             # When tools_with_source=True, the tool instruction should include more detail

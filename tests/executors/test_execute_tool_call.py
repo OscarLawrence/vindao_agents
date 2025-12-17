@@ -8,7 +8,6 @@ from vindao_agents.Tool import Tool
 
 
 class TestExecuteToolCall:
-
     def test_execute_tool_call_success(self):
         def sample_tool_1(x, y):
             return x + y

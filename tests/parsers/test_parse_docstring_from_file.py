@@ -23,11 +23,7 @@ class TestParseDocstringFromFile:
         """Test parsing a file with a multi-line docstring."""
         file_path = tmp_path / "module.py"
         file_path.write_text(
-            '"""This is a multi-line docstring.\n\n'
-            'It has multiple paragraphs.\n'
-            '"""\n\n'
-            'def foo():\n'
-            '    pass'
+            '"""This is a multi-line docstring.\n\nIt has multiple paragraphs.\n"""\n\ndef foo():\n    pass'
         )
 
         result = parse_docstring_from_file(file_path)
@@ -36,7 +32,7 @@ class TestParseDocstringFromFile:
     def test_file_without_docstring(self, tmp_path: Path):
         """Test parsing a file without a docstring."""
         file_path = tmp_path / "module.py"
-        file_path.write_text('x = 42\n\ndef foo():\n    pass')
+        file_path.write_text("x = 42\n\ndef foo():\n    pass")
 
         result = parse_docstring_from_file(file_path)
         assert result is None
@@ -44,7 +40,7 @@ class TestParseDocstringFromFile:
     def test_file_with_only_comments(self, tmp_path: Path):
         """Test parsing a file with only comments (no docstring)."""
         file_path = tmp_path / "module.py"
-        file_path.write_text('# This is a comment\n# Not a docstring\n\nx = 42')
+        file_path.write_text("# This is a comment\n# Not a docstring\n\nx = 42")
 
         result = parse_docstring_from_file(file_path)
         assert result is None
@@ -67,10 +63,7 @@ class TestParseDocstringFromFile:
     def test_file_with_relative_imports(self, tmp_path: Path):
         """Test parsing a file with relative imports (should not execute)."""
         file_path = tmp_path / "module.py"
-        file_path.write_text(
-            '"""Module with relative imports."""\n\n'
-            'from .nonexistent import something\n'
-        )
+        file_path.write_text('"""Module with relative imports."""\n\nfrom .nonexistent import something\n')
 
         # Should successfully extract docstring without executing the imports
         result = parse_docstring_from_file(file_path)
@@ -79,7 +72,7 @@ class TestParseDocstringFromFile:
     def test_empty_file(self, tmp_path: Path):
         """Test parsing an empty file returns None."""
         file_path = tmp_path / "empty.py"
-        file_path.write_text('')
+        file_path.write_text("")
 
         result = parse_docstring_from_file(file_path)
         assert result is None

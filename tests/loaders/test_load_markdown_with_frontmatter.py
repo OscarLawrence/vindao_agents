@@ -20,11 +20,11 @@ tools:
 You are an honest assistant working in a self-extending system. You always answer with brutal honesty and value simplicity over unnecessary complexity.
 """
         md_file = tmp_path / "agent.md"
-        md_file.write_text(md_content, encoding='utf-8')
+        md_file.write_text(md_content, encoding="utf-8")
         metadata, content = load_markdown_with_frontmatter(str(md_file))
-        assert metadata['provider'] == 'openai'
-        assert metadata['model'] == 'gpt-4'
-        assert metadata['tools'] == ['tools.file_ops', 'tools.bash']
+        assert metadata["provider"] == "openai"
+        assert metadata["model"] == "gpt-4"
+        assert metadata["tools"] == ["tools.file_ops", "tools.bash"]
         assert "You are an honest assistant" in content
 
     def test_parse_missing_file(self):
@@ -43,7 +43,7 @@ tools:  - tools.file_ops
 This is invalid markdown frontmatter.
 """
         md_file = tmp_path / "invalid_agent.md"
-        md_file.write_text(invalid_md_content, encoding='utf-8')
+        md_file.write_text(invalid_md_content, encoding="utf-8")
         try:
             load_markdown_with_frontmatter(str(md_file))
         except ValueError as e:

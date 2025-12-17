@@ -1,4 +1,3 @@
-
 # stdlib
 import json
 from os import getenv
@@ -12,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from vindao_agents import Agent
 from vindao_agents.loaders import load_agent_from_markdown
 
-USER_DATA_DIR = getenv('USER_DATA_DIR', Path.cwd() / ".vindao_agents")
+USER_DATA_DIR = getenv("USER_DATA_DIR", Path.cwd() / ".vindao_agents")
 
 app = FastAPI()
 
@@ -25,35 +24,39 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get('/sessions')
+
+@app.get("/sessions")
 async def get_all_sessions():
-    sessions_path = Path(USER_DATA_DIR) / 'sessions'
+    sessions_path = Path(USER_DATA_DIR) / "sessions"
     sessions = {}
     print(sessions_path)
     for file in sessions_path.iterdir():
         print(file.suffix)
-        if file.suffix == '.json':
+        if file.suffix == ".json":
             with open(file) as f:
                 sessions[file.stem] = json.load(f)
     return sessions
 
+
 @app.get("/session/{session_id}")
 async def get_session(session_id: str):
-    session_path = Path(USER_DATA_DIR) / 'sessions' / f"{session_id}.json"
+    session_path = Path(USER_DATA_DIR) / "sessions" / f"{session_id}.json"
     if not session_path.exists():
         return {"error": "Session not found"}
     with open(session_path) as f:
         session_data = json.load(f)
     return session_data
 
+
 @app.get("/agents")
 async def get_agents():
-    agents_path = Path(USER_DATA_DIR) / 'agents'
+    agents_path = Path(USER_DATA_DIR) / "agents"
     agents = {}
     for file in agents_path.iterdir():
-        if file.suffix == '.md':
+        if file.suffix == ".md":
             agents[file.stem] = load_agent_from_markdown(file)
     return {"agents": agents}
+
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -66,4 +69,3 @@ async def websocket_endpoint(websocket: WebSocket):
                 await websocket.send_json({"type": "content", "data": chunk})
             elif chunk_type == "tool":
                 await websocket.send_json({"type": "tool", "data": chunk.result})
-

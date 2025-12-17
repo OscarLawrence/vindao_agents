@@ -17,7 +17,7 @@ class TestLoadSystemMessageTemplate:
         # Create a default prompt file
         default_prompt_path = prompts_dir / "default.prompt"
         default_content = "This is the default system message."
-        default_prompt_path.write_text(default_content, encoding='utf-8')
+        default_prompt_path.write_text(default_content, encoding="utf-8")
 
         # Load the template for a non-existing model
         loaded_template = load_system_message_template("non_existing_model", user_data_dir)
@@ -31,7 +31,7 @@ class TestLoadSystemMessageTemplate:
         # Create a model-specific prompt file
         model_prompt_path = prompts_dir / "gpt-4.prompt"
         model_content = "This is the GPT-4 system message."
-        model_prompt_path.write_text(model_content, encoding='utf-8')
+        model_prompt_path.write_text(model_content, encoding="utf-8")
 
         # Load the template for the existing model
         loaded_template = load_system_message_template("gpt-4", user_data_dir)

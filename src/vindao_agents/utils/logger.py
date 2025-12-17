@@ -1,4 +1,5 @@
 """Logging utilities for the vindao_agents framework."""
+
 import logging
 from typing import Protocol
 
@@ -36,7 +37,7 @@ def get_default_logger(name: str = "vindao_agents") -> logging.Logger:
     logger = logging.getLogger(name)
     if not logger.handlers:
         handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter('%(message)s'))
+        handler.setFormatter(logging.Formatter("%(message)s"))
         logger.addHandler(handler)
         logger.setLevel(logging.INFO)
     return logger

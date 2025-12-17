@@ -1,4 +1,5 @@
 """Multi-file reader tool."""
+
 from ...formatters.format_exception import format_exception
 from .read_file import read_file
 

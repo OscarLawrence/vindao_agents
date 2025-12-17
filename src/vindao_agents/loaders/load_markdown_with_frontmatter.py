@@ -16,7 +16,7 @@ def load_markdown_with_frontmatter(file_path: str) -> tuple[dict[str, Any], str]
         raise FileNotFoundError(f"Markdown file not found: {file_path}")
 
     try:
-        with open(path, encoding='utf-8') as f:
+        with open(path, encoding="utf-8") as f:
             post = frontmatter.load(f)
 
         return post.metadata, post.content

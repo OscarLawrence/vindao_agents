@@ -14,4 +14,3 @@ class ToolCall(BaseModel):
     call: str = Field(description="The exact tool call made")
     id: str = Field(default_factory=lambda: uuid().hex, description="Unique identifier for the tool call")
     result: str | None = Field(default=None, description="Result of the tool call execution")
-

@@ -1,4 +1,5 @@
 """Console formatter for displaying agent events."""
+
 from __future__ import annotations
 
 import sys

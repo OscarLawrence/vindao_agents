@@ -20,11 +20,11 @@ def sample_tool():
 
     def multiply(x: int, y: int) -> int:
         """Multiply two integers.
-        
+
         Args:
             x: First integer
             y: Second integer
-            
+
         Returns:
             The product of x and y
         """
@@ -39,11 +39,11 @@ def sample_tool_with_exception():
 
     def divide(x: int, y: int) -> float:
         """Divide two integers.
-        
+
         Args:
             x: Numerator
             y: Denominator
-            
+
         Returns:
             The quotient of x and y
         """

@@ -7,7 +7,6 @@ from vindao_agents.formatters.format_exception import format_exception
 
 
 class TestFormatException:
-
     def test_without_function(self):
         try:
             1 / 0

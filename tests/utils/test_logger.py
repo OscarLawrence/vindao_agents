@@ -1,4 +1,5 @@
 """Tests for the logging utility module."""
+
 import logging
 from unittest.mock import MagicMock, patch
 
@@ -11,20 +12,20 @@ class TestAgentLoggerProtocol:
     def test_protocol_has_required_methods(self):
         """Test that AgentLogger protocol defines required methods."""
         # Verify protocol has the expected methods
-        assert hasattr(AgentLogger, 'debug')
-        assert hasattr(AgentLogger, 'info')
-        assert hasattr(AgentLogger, 'warning')
-        assert hasattr(AgentLogger, 'error')
+        assert hasattr(AgentLogger, "debug")
+        assert hasattr(AgentLogger, "info")
+        assert hasattr(AgentLogger, "warning")
+        assert hasattr(AgentLogger, "error")
 
     def test_standard_logger_implements_protocol(self):
         """Test that Python's standard Logger implements the AgentLogger protocol."""
         logger = logging.getLogger("test")
 
         # Standard logger should have all required methods
-        assert hasattr(logger, 'debug')
-        assert hasattr(logger, 'info')
-        assert hasattr(logger, 'warning')
-        assert hasattr(logger, 'error')
+        assert hasattr(logger, "debug")
+        assert hasattr(logger, "info")
+        assert hasattr(logger, "warning")
+        assert hasattr(logger, "error")
 
         # These methods should be callable
         assert callable(logger.debug)
@@ -37,10 +38,10 @@ class TestAgentLoggerProtocol:
         mock_logger = MagicMock(spec=AgentLogger)
 
         # Mock should have all protocol methods
-        assert hasattr(mock_logger, 'debug')
-        assert hasattr(mock_logger, 'info')
-        assert hasattr(mock_logger, 'warning')
-        assert hasattr(mock_logger, 'error')
+        assert hasattr(mock_logger, "debug")
+        assert hasattr(mock_logger, "info")
+        assert hasattr(mock_logger, "warning")
+        assert hasattr(mock_logger, "error")
 
         # Can call methods without errors
         mock_logger.info("test message")
@@ -96,13 +97,7 @@ class TestGetDefaultLogger:
 
         # Create a log record and format it
         record = logging.LogRecord(
-            name="test",
-            level=logging.INFO,
-            pathname="",
-            lineno=0,
-            msg="Test message",
-            args=(),
-            exc_info=None
+            name="test", level=logging.INFO, pathname="", lineno=0, msg="Test message", args=(), exc_info=None
         )
         formatted = formatter.format(record)
 
@@ -127,7 +122,7 @@ class TestGetDefaultLogger:
         logger = get_default_logger("test_logging")
 
         # Mock the handler to capture log output
-        with patch.object(logger.handlers[0], 'emit') as mock_emit:
+        with patch.object(logger.handlers[0], "emit") as mock_emit:
             logger.info("Test info message")
             logger.warning("Test warning message")
             logger.error("Test error message")
@@ -139,7 +134,7 @@ class TestGetDefaultLogger:
         """Test that DEBUG messages are not logged with INFO level."""
         logger = get_default_logger("test_debug_level")
 
-        with patch.object(logger.handlers[0], 'emit') as mock_emit:
+        with patch.object(logger.handlers[0], "emit") as mock_emit:
             logger.debug("Debug message")
 
             # Should not be emitted because level is INFO
@@ -152,7 +147,7 @@ class TestGetDefaultLogger:
         # Change level to DEBUG
         logger.setLevel(logging.DEBUG)
 
-        with patch.object(logger.handlers[0], 'emit') as mock_emit:
+        with patch.object(logger.handlers[0], "emit") as mock_emit:
             logger.debug("Debug message")
 
             # Should now be emitted

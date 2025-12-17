@@ -1,4 +1,5 @@
 """Message builder for constructing system messages from templates and configuration."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -27,11 +28,7 @@ class MessageBuilder:
     """
 
     def build_system_message(
-        self,
-        model: str,
-        tools: dict[str, Tool],
-        parser: ToolParser,
-        config: AgentConfig
+        self, model: str, tools: dict[str, Tool], parser: ToolParser, config: AgentConfig
     ) -> SystemMessage:
         """Build a system message from configuration and components.
 
@@ -54,14 +51,17 @@ class MessageBuilder:
         parser_instructions = parser.get_instructions()
 
         # Format the final prompt with all data
-        content = format_prompt(template, {
-            **config.system_prompt_data,
-            "model": model,
-            "behavior": config.behavior,
-            "name": config.name,
-            "tools": tool_str,
-            "parser_instructions": parser_instructions
-        })
+        content = format_prompt(
+            template,
+            {
+                **config.system_prompt_data,
+                "model": model,
+                "behavior": config.behavior,
+                "name": config.name,
+                "tools": tool_str,
+                "parser_instructions": parser_instructions,
+            },
+        )
 
         return SystemMessage(content=content)
 

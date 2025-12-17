@@ -47,7 +47,7 @@ class TestListDir:
         """Test that Python modules without docstrings are listed without description."""
         # Setup
         module_path = tmp_path / "no_docstring.py"
-        module_path.write_text('x = 42\n\ndef foo():\n    pass')
+        module_path.write_text("x = 42\n\ndef foo():\n    pass")
 
         # Test
         output = list_dir(tmp_path.as_posix())
@@ -62,7 +62,7 @@ class TestListDir:
 
         # Test
         output = list_dir(tmp_path.as_posix())
-        lines = output.split('\n')
+        lines = output.split("\n")
 
         # Package info should be at the top
         assert "This is my package." in lines[0]

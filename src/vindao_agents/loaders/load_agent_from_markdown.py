@@ -1,4 +1,3 @@
-
 # stdlib
 from pathlib import Path
 

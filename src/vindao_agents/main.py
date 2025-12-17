@@ -1,4 +1,5 @@
 """CLI entry point for Vindao Agents."""
+
 import argparse
 import sys
 from pathlib import Path
@@ -37,34 +38,20 @@ Examples:
   agent --resume abc123          # Resume session with ID abc123
   agent --list                   # List available agents
   agent --version                # Show version
-        """
+        """,
     )
 
     parser.add_argument(
-        "--agent", "-a",
-        type=str,
-        default="DefaultAgent",
-        help="Name of the agent to use (default: DefaultAgent)"
+        "--agent", "-a", type=str, default="DefaultAgent", help="Name of the agent to use (default: DefaultAgent)"
     )
 
     parser.add_argument(
-        "--resume", "-r",
-        type=str,
-        metavar="SESSION_ID",
-        help="Resume a previous session by session ID"
+        "--resume", "-r", type=str, metavar="SESSION_ID", help="Resume a previous session by session ID"
     )
 
-    parser.add_argument(
-        "--list", "-l",
-        action="store_true",
-        help="List available predefined agents"
-    )
+    parser.add_argument("--list", "-l", action="store_true", help="List available predefined agents")
 
-    parser.add_argument(
-        "--version", "-v",
-        action="version",
-        version=f"vindao_agents {__version__}"
-    )
+    parser.add_argument("--version", "-v", action="version", version=f"vindao_agents {__version__}")
 
     args = parser.parse_args()
 
