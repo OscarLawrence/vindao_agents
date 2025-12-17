@@ -49,6 +49,10 @@ coverage.xml
 .pytest_cache/
 cover/
 
+# Linter and type checker caches
+.mypy_cache/
+.ruff_cache/
+
 # Virtual environments
 .venv/
 venv/
