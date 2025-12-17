@@ -27,8 +27,8 @@ class MockInferenceAdapter:
         self.responses = responses or [("response", "content")]
         self.call_count = 0
 
-    def completion(self, messages):
-        """Mock completion method that yields predefined responses."""
+    def complete_chat(self, messages, max_retries: int = 5, retry: int = 0):
+        """Mock complete_chat method that yields predefined responses."""
         for chunk, chunk_type in self.responses:
             yield chunk, chunk_type
         self.call_count += 1
@@ -108,15 +108,17 @@ class TestAgentInvoke:
 class TestAgentInstruct:
     """Tests for Agent instruct method."""
 
-    @patch("vindao_agents.Agent.adapters")
-    def test_instruct_adds_user_message(self, mock_adapters, tmp_path):
+    def test_instruct_adds_user_message(self, tmp_path):
         """Test that instruct adds user message to state."""
         mock_adapter = MockInferenceAdapter(
             "ollama", "qwen2.5:0.5b", responses=[("response", "content")]
         )
-        mock_adapters.__getitem__.return_value = lambda provider, model: mock_adapter
 
-        agent = Agent(user_data_dir=tmp_path, auto_save=False)
+        agent = Agent(
+            user_data_dir=tmp_path,
+            auto_save=False,
+            inference_adapter=mock_adapter
+        )
         initial_message_count = len(agent.state.messages)
 
         list(agent.instruct("Test instruction"))
@@ -127,17 +129,19 @@ class TestAgentInstruct:
         ]
         assert any(msg.content == "Test instruction" for msg in user_messages)
 
-    @patch("vindao_agents.Agent.adapters")
-    def test_instruct_yields_chunks(self, mock_adapters, tmp_path):
+    def test_instruct_yields_chunks(self, tmp_path):
         """Test that instruct yields chunks from invoke."""
         mock_adapter = MockInferenceAdapter(
             "ollama",
             "qwen2.5:0.5b",
             responses=[("Hello", "content"), (" world", "content")],
         )
-        mock_adapters.__getitem__.return_value = lambda provider, model: mock_adapter
 
-        agent = Agent(user_data_dir=tmp_path, auto_save=False)
+        agent = Agent(
+            user_data_dir=tmp_path,
+            auto_save=False,
+            inference_adapter=mock_adapter
+        )
 
         chunks = list(agent.instruct("Test"))
         assert len(chunks) > 0
@@ -148,17 +152,19 @@ class TestAgentChat:
     """Tests for Agent chat method."""
 
     @patch("builtins.input")
-    @patch("vindao_agents.Agent.adapters")
-    def test_chat_exit_command(self, mock_adapters, mock_input, tmp_path):
+    def test_chat_exit_command(self, mock_input, tmp_path):
         """Test that chat exits on 'exit' command."""
         mock_adapter = MockInferenceAdapter(
             "ollama", "qwen2.5:0.5b", responses=[("response", "content")]
         )
-        mock_adapters.__getitem__.return_value = lambda provider, model: mock_adapter
 
         mock_input.return_value = "exit"
 
-        agent = Agent(user_data_dir=tmp_path, auto_save=False)
+        agent = Agent(
+            user_data_dir=tmp_path,
+            auto_save=False,
+            inference_adapter=mock_adapter
+        )
 
         # Mock the logger to capture calls
         mock_logger = MagicMock()
@@ -171,19 +177,19 @@ class TestAgentChat:
         assert any("Exiting" in str(call) for call in logger_calls)
 
     @patch("builtins.input")
-    @patch("vindao_agents.Agent.adapters")
-    def test_chat_keyboard_interrupt(
-        self, mock_adapters, mock_input, tmp_path
-    ):
+    def test_chat_keyboard_interrupt(self, mock_input, tmp_path):
         """Test that chat handles keyboard interrupt gracefully."""
         mock_adapter = MockInferenceAdapter(
             "ollama", "qwen2.5:0.5b", responses=[("response", "content")]
         )
-        mock_adapters.__getitem__.return_value = lambda provider, model: mock_adapter
 
         mock_input.side_effect = KeyboardInterrupt()
 
-        agent = Agent(user_data_dir=tmp_path, auto_save=False)
+        agent = Agent(
+            user_data_dir=tmp_path,
+            auto_save=False,
+            inference_adapter=mock_adapter
+        )
 
         # Mock the logger to capture calls
         mock_logger = MagicMock()

@@ -65,8 +65,8 @@ def mock_inference_adapter_factory():
             self.responses = responses or [("response", "content")]
             self.call_count = 0
 
-        def completion(self, messages):
-            """Mock completion method that yields predefined responses."""
+        def complete_chat(self, messages, max_retries: int = 5, retry: int = 0):
+            """Mock complete_chat method that yields predefined responses."""
             for chunk, chunk_type in self.responses:
                 yield chunk, chunk_type
             self.call_count += 1

@@ -3,7 +3,7 @@
 from pathlib import Path
 
 # local
-from vindao_agents.loaders import load_markdown_with_frontmatter
+from vindao_agents.loaders.load_markdown_with_frontmatter import load_markdown_with_frontmatter
 
 
 def load_agent_from_markdown(path: Path | str) -> dict:

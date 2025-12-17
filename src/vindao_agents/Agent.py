@@ -100,7 +100,11 @@ class Agent:
         )
         if isinstance(inference_adapter, str):
             inference_adapter = adapters.get(inference_adapter, LiteLLMInferenceAdapter)
-        self.inference_adapter = inference_adapter(provider=self.config.provider, model=self.config.model)
+        # If inference_adapter is a class, instantiate it; if it's already an instance, use it directly
+        if isinstance(inference_adapter, type):
+            self.inference_adapter = inference_adapter(provider=self.config.provider, model=self.config.model)
+        else:
+            self.inference_adapter = inference_adapter
 
         if isinstance(store, str):
             store = stores.get(store, JsonAgentStore)
